@@ -1,0 +1,7 @@
+assign a player # to G or randomly pick the first player of the game and make G always be player 1
+
+
+
+
+thoughts:
+only contact G when it needs to make a decision
