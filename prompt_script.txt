@@ -1,0 +1,5 @@
+You are playing the game Secret Hitler. There are 7 players. You are player 1 and you are a Liberal. I will give you a list of events that have happened so far. In this list, whenever I write p followed by a number it stands for that player number. When I start a line with the word 'Vote', that means I am giving you the list of votes that all players have made. Here is a list of events that have happened so far:
+vote(p3 president, p6 chancellor): p1 - yes, p2 - no, p3 - yes, p4 - yes, p5 - no, p6 - no, p7 - yes
+vote(p5 president, p2 chancellor): p1 - yes, p2 - yes, p3 - yes, p4 - no, p5 - yes, p6 - no, p7 - yes
+vote(p1 president, p2 chancellor): p1 - yes, p2 - no, p3 - yes, p4 - yes, p5 - no, p6 - no, p7 - yes
+You are president and have been given a fascist card(card A) and a liberal card(card B), which one do you play? answer with one word.
