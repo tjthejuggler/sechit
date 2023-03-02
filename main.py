@@ -3,9 +3,11 @@ import random
 import chatgpt_req
 import fake_chatgpt_req
 from game_summary import GameSummary
+import read_gov_policies
 
 #chatgpt_req.make_request("if there are no oranges, what will you")
 game_sum = GameSummary()
+game_status = {}
 
 def assign_roles(num_players):
     if num_players < 5 or num_players > 10:
@@ -55,33 +57,43 @@ def handle_request(request_message):
     game_sum.append(["assistant",response])
     print(game_sum.read()[-1]['content'])
 
-    for item in game_sum.read():
+    for item in game_sum.read(): #this is for testing only, it should actually only be seen by the assistant
         print(item['role'],": ",item['content'])
 
-def input_vote_results(num_players):
-    #THIS FUNCTION NEEDS MODIFIED, THE CURRENT PLAYER DOESN'T MATTER, BUT DEAD PLAYERS DO
+def input_vote_results(num_players, bot_vote):
     vote_results = ""
-    for i in range(1, num_players+1):
-        voting_player = (i+current_player)%num_players
-        players_vote = input(f"Player {voting_player}: (J)a / (N)ein? ")
-        if players_vote == "J" or players_vote == "j" or players_vote == "Y" or players_vote == "y":
-            players_vote = "Y"
-        elif players_vote == "N" or players_vote == "n":
-            players_vote = "N"
-        vote_results += "p"+voting_player +"-"+ players_vote
-    
+    for voting_player in range(1, num_players+1):
+        if voting_player not in game_status["dead_players"]:
+            players_vote = ""
+            if voting_player == 1:
+                if bot_vote.startswith("Y") or bot_vote.startswith("y") or bot_vote.startswith("J") or bot_vote.startswith("j") or bot_vote.contains("Yes") or bot_vote.contains("yes"):
+                    players_vote = "Y"
+                else:
+                    players_vote = "N"
+                players_vote = bot_vote
+            else:
+                players_vote = input(f"Player {voting_player}: (J)a / (N)ein? ")
+                if players_vote == "J" or players_vote == "j" or players_vote == "Y" or players_vote == "y":
+                    players_vote = "Y"
+                elif players_vote == "N" or players_vote == "n":
+                    players_vote = "N"
+            vote_results += "p"+voting_player +"-"+ players_vote    
     game_sum.append_to_last_user(["vote_results",vote_results])
     print(game_sum.read())
-
-
+    passed = vote_results.count("Y") > vote_results.count("N")
+    return passed
 
 def input_human_nomination(current_player):
     nomination = input(f"Player {current_player}: Who do you want to nominate? ")
     game_sum.append_to_last_user(["p"+current_player+" nominated p"+nomination])
     print(game_sum.read())
 
+def increase_current_player():
+    game_status["current_player"] += 1
+    if game_status["current_player"] > game_status["num_players"]:
+        game_status["current_player"] = 1
+
 def main():    
-    game_status = {}
     game_status["num_players"] = int(input("Enter the number of players: "))
     bot_role = distribute_roles(game_status["num_players"])
     print("bot role is ", bot_role)
@@ -112,11 +124,23 @@ def main():
         if game_status["current_player"] == 1: #bot's turn
             print("bot's turn")
             if game_status["turn_type"] == "nominate":
-                nomination = handle_request("who do you nominate as chancellor?")
-                #press enter to see how the bot votes
+                bot_nomination = handle_request("who do you nominate as chancellor?")
+                print("bot nominated ", bot_nomination) #maybe it will mess up the bot_nomination, there should be a way to ask again or something
                 input("Press any key to see how the bot votes.")
-                #bot votes
-                input_vote_results(game_status["num_players"], game_status["current_player"])
+                bot_vote = handle_request("how do you vote?")
+                passed = input_vote_results(game_status["num_players"], bot_vote)
+                if passed:
+                    #show two policies to the bot
+                    bot_vote = handle_request(read_gov_policies.show(2))
+                    #play the card that the bot selected
+                    #add the bots card to the game summary
+                    if 
+                else:
+                    increase_current_player()
+                
+
+
+
 
             #input_vote_results()
                 

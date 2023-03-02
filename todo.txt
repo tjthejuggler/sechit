@@ -1,3 +1,6 @@
+i think things can be way simplified, the only real rotating turn is the president nominations,
+ i think we can just have the one loop and then ask for bot/human input as needed
+
 assign a player # to G or randomly pick the first player of the game and make G always be player 1
 
 the vote turn type can be removed since it happens simultaneously
