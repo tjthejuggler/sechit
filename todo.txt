@@ -1,7 +1,18 @@
 assign a player # to G or randomly pick the first player of the game and make G always be player 1
 
 
+questions:
+what is differnce chatgpt turbo and 301?
 
 
 thoughts:
 only contact G when it needs to make a decision
+
+
+
+
+
+
+
+make a new file that holds the initial prompt, load that into the main loop
+maybe make something special if the bot is player 1

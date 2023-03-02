@@ -1,17 +1,18 @@
-import requests
+import openai
 
-url = "https://api.openai.com/v1/chat/gpt"
-prompt = "Hello, how are you?"
-headers = {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer YOUR_API_KEY"
-}
-data = {
-    "prompt": prompt,
-    "temperature": 0.5,
-    "max_tokens": 50,
-    "stop": "\n"
-}
+def send_request(request_message):
+    with open('api_key.txt', 'r') as f:
+        api_key = f.read().strip()
+    openai.api_key = (api_key)
+    response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=request_message
+    )
+    return(response["choices"][0]["message"]["content"])
 
-response = requests.post(url, headers=headers, json=data)
-print(response.json()["choices"][0]["text"])
+# print(send_request([
+#             {"role": "system", "content": "You are a helpful assistant."},
+#             {"role": "user", "content": "Who won the world series in 2000?"},
+#         ]))
+
+#print(response)
