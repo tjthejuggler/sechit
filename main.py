@@ -58,12 +58,27 @@ def handle_request(request_message):
     for item in game_sum.read():
         print(item['role'],": ",item['content'])
 
-def input_vote_results(num_players, current_player):
-    vote_results = {}
+def input_vote_results(num_players):
+    #THIS FUNCTION NEEDS MODIFIED, THE CURRENT PLAYER DOESN'T MATTER, BUT DEAD PLAYERS DO
+    vote_results = ""
     for i in range(1, num_players+1):
         voting_player = (i+current_player)%num_players
-        input(f"Player {voting_player}: Ja / Nein? ")
+        players_vote = input(f"Player {voting_player}: (J)a / (N)ein? ")
+        if players_vote == "J" or players_vote == "j" or players_vote == "Y" or players_vote == "y":
+            players_vote = "Y"
+        elif players_vote == "N" or players_vote == "n":
+            players_vote = "N"
+        vote_results += "p"+voting_player +"-"+ players_vote
+    
+    game_sum.append_to_last_user(["vote_results",vote_results])
+    print(game_sum.read())
 
+
+
+def input_human_nomination(current_player):
+    nomination = input(f"Player {current_player}: Who do you want to nominate? ")
+    game_sum.append_to_last_user(["p"+current_player+" nominated p"+nomination])
+    print(game_sum.read())
 
 def main():    
     game_status = {}
@@ -98,7 +113,12 @@ def main():
             print("bot's turn")
             if game_status["turn_type"] == "nominate":
                 nomination = handle_request("who do you nominate as chancellor?")
-            input_vote_results()
+                #press enter to see how the bot votes
+                input("Press any key to see how the bot votes.")
+                #bot votes
+                input_vote_results(game_status["num_players"], game_status["current_player"])
+
+            #input_vote_results()
                 
             
         else:
@@ -106,15 +126,17 @@ def main():
             print("player's turn")
             if game_status["turn_type"] == "nominate":
                 nomination = input("who does player "+game_status["current_player"]+" nominate?")
+                
+            if game_status["turn_type"] == "vote":
+                input_human_vote(game_status["num_players"], game_status["current_player"])
 
     #while (game_is_going):
-        
 
-#main()
+main()
 
 # create an instance of the TextVariable class
-game_sum.append(["system","you are a five year old boy who loves insects a rediculous amount"])
-handle_request("what is your favorite thing to do on the weekend?")
+# game_sum.append(["system","you are a five year old boy who loves insects a rediculous amount"])
+# handle_request("what is your favorite thing to do on the weekend?")
 
 # read the current value of the text attribute
 # print(game_sum.read())   # output: "Hello, world!"

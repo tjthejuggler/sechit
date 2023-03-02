@@ -1,5 +1,10 @@
 assign a player # to G or randomly pick the first player of the game and make G always be player 1
 
+the vote turn type can be removed since it happens simultaneously
+bot voting needs added
+
+input vote result needs to be added to human nomination
+bot needs to be asked to vote for human nomination
 
 questions:
 what is differnce chatgpt turbo and 301?
