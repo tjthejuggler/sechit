@@ -9,14 +9,18 @@ bot voting needs added
 input vote result needs to be added to human nomination
 bot needs to be asked to vote for human nomination
 
+a way to override everything and talk directly to the bot with input for special situations
+    veto needs to be hardcoded or handled like this
+
 questions:
 what is differnce chatgpt turbo and 301?
 
 
 thoughts:
 only contact G when it needs to make a decision
+every time an a game event happens, bot could be asked if it has something it would like to say
 
-
+bot should be told that if they are liberal then they should never lie, and if they are facist then they should be deceptive
 
 
 

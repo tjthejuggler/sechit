@@ -19,9 +19,9 @@ def show(num_cards):
     num_red = 0
     num_blue = 0
 
-    read_card = []
+    read_cards = []
 
-    while len(read_card) < num_cards:
+    while len(read_cards) < num_cards:
         # Start capturing frames
         while True:
             # Capture a frame
@@ -55,10 +55,10 @@ def show(num_cards):
             if cv2.waitKey(1) == ord(' '):
                 if percentage_red > percentage_blue:
                     print("Mostly red!")
-                    read_card.append("red")
+                    read_cards.append("red")
                 else:
                     print("Mostly blue!")
-                    read_card.append("blue")
+                    read_cards.append("blue")
                 break
 
             # Display the frame and the masks
@@ -70,15 +70,8 @@ def show(num_cards):
     cap.release()
     cv2.destroyAllWindows()
 
-    print(read_card)
+    print(read_cards)
 
-    policies_question = "you have been given the following policies: "
-    for i, policy in enumerate(read_card):
-        if policy == "red":
-            policies_question += str(i)+")red "
-        else:
-            policies_question += str(i)+")blue "
-                
-    policies_question += ". Which policy would you like to enact? Answer with the number of the policy only."
 
-    return(policies_question)
+
+    return(read_cards)
