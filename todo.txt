@@ -22,9 +22,22 @@ every time an a game event happens, bot could be asked if it has something it wo
 
 bot should be told that if they are liberal then they should never lie, and if they are facist then they should be deceptive
 
+maybe keep track of all stats and the phrasing used to interact with the bot, and then use tht to improve the bot
+
+a seperate instance can be used to turn player numbers into appropriate phrasing
+    this can be used to make the bot more human like and have it seem more like whatever character it is
+
+instead of immediately asking the bot for an official response, it could first be asked who it is thinking about investigating/executing to allow players to try to pursuade the bot to change its mind.
+    this could also be on a randomizer, so sometimes it listens to people pursuading it.
+        instead of a randomizer it could be asked if it wants to make a decision or listen to people pursuading it
 
 
 
+is it possible to text the bot using a telegram bot?
+    a wireless microphone that can be passed around to talk to the bot may be better. Ideally there would be a way to tell the bot who is talking to it. The data inputter could just always tell it before someone talks, or it could be on the player to introduce themself.
+        For this we need a good voice to text api.
+
+a text to voice api could be used to make the bot talk to the players
 
 make a new file that holds the initial prompt, load that into the main loop
 maybe make something special if the bot is player 1
