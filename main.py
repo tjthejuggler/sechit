@@ -4,6 +4,7 @@ import chatgpt_req
 import fake_chatgpt_req
 from game_summary import GameSummary
 import read_gov_policies
+import sys
 
 #chatgpt_req.make_request("if there are no oranges, what will you")
 game_sum = GameSummary()
@@ -20,33 +21,47 @@ def assign_roles(num_players):
     random.shuffle(roles)
     return roles
 
+def clear_three_console_lines():
+    # use '\033[F' to move the cursor up one line, use '\r' to return the cursor to the beginning of the line
+    for i in range(5):
+        sys.stdout.write('\033[F\r')
+        sys.stdout.write(' ' * 100)
+    sys.stdout.write('\r')
+    sys.stdout.flush()
+
 def distribute_roles(num_players):
     seen_roles = set()
     roles = assign_roles(num_players)
     for i in range(1, num_players):
-        input(f"Player "+str(i+1)+": Press any key to reveal your role: ")
-        if i > 0: #IS THIS EVER USED?
-            print("Previous roles:")
-            for j in range(i):
-                if j not in seen_roles:
-                    print(f"Player {j+1}: Hidden")
-            print("-------------")
+        
+        input(f"You are Player "+str(i+1)+": Press any key to reveal your role: ")
+        # if i > 0: #IS THIS EVER USED?
+        #     print("Previous roles:")
+        #     for j in range(i):
+        #         if j not in seen_roles:
+        #             print(f"Player {j+1}: Hidden")
+        #     print("-------------")
+        text_to_show = ""
         if roles[i] == "Fascist":
             fascist_indices = [j+1 for j, role in enumerate(roles) if role == "Fascist" and j != i]
             #if len(fascist_indices) == 1 and num_players < 7:
             hitler_index = next(j+1 for j, role in enumerate(roles) if role == "Hitler")
             if num_players < 7:           
-                print(f"Hitler is: Player {hitler_index}")
+                text_to_show += (f"Hitler is: Player {hitler_index}")
             else:
-                print(f"Your team mates are: Players {', '.join(str(index) for index in fascist_indices)} and Hitler is: Player {hitler_index}")
+                text_to_show +=  (f"Your Fascists are: Players {', '.join(str(index) for index in fascist_indices)} and Hitler is: Player {hitler_index}")
         elif roles[i] == "Hitler":
             fascist_index = next(j+1 for j, role in enumerate(roles) if role == "Fascist")
             if num_players < 7:
-                print(f"Your team mate is: Player {fascist_index}")
-        print(f"Your role: {roles[i]}")
+                text_to_show +=  (f"Your Fascist is: Player {fascist_index}")
+        text_to_show = (f"Your role: {roles[i].upper()}       ") + text_to_show
         seen_roles.add(i)
-        input("Press any key to hide your role.")
-        print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        print(" ")
+        print(text_to_show)
+        print(" ")
+        input("Press any key to hide your role!!")
+        clear_three_console_lines()
+        #print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     return roles
 
 def handle_request(request_message):
@@ -77,21 +92,21 @@ def input_vote_results(num_players, bot_vote, dead_players):
                 else:
                     players_vote = "N"
             vote_results += "p"+voting_player +"-"+ players_vote    
-    game_sum.append_to_last_user(["vote_results",vote_results])
+    game_sum.append_to_last_user("vote_results",vote_results)
     print(game_sum.read())
     passed = vote_results.count("Y") > vote_results.count("N")
     return passed
 
-def input_human_nomination(current_player):
-    nomination = input(f"Player {current_player}: Who do you want to nominate? ")
-    game_sum.append_to_last_user(["p"+current_player+" nominated p"+nomination])
+def input_human_nomination(current_president):
+    nomination = input(f"Player {current_president}: Who do you want to nominate? ")
+    game_sum.append_to_last_user("p"+current_president+" nominated p"+nomination)
     print(game_sum.read())
 
-def increase_current_player(current_player, num_players):
-    current_player += 1
-    if current_player > num_players:
-        current_player = 1
-    return current_player
+def increase_current_president(current_president, num_players):
+    current_president += 1
+    if current_president > num_players:
+        current_president = 1
+    return current_president
 
 def check_for_policy_game_completion(fascist_policies, liberal_policies):
     game_is_going = True
@@ -111,7 +126,7 @@ def check_for_special_power(num_players, num_fascist_policies, player_number, bo
     if (num_players in [5,6]) and num_fascist_policies == 3:
         if player_number == 1:
             cards_seen = read_gov_policies.show(3)
-            game_sum.append_to_last_user([make_policy_peek_sentence(cards_seen)])
+            game_sum.append_to_last_user(make_policy_peek_sentence(cards_seen))
         else:
             game_sum.append_to_last_user("As president, p"+player_number+" peeked at the top 3 Policy tiles.")
     #INVESTIGATION
@@ -124,20 +139,20 @@ def check_for_special_power(num_players, num_fascist_policies, player_number, bo
             print("The bot will investigate player "+bot_investigation)
             investigated_players_input = input("Player"+bot_investigation+", press (F)ascist or (L)iberal, then press enter.")
             if investigated_players_input.beginswith("F") or investigated_players_input.beginswith("f"):
-                game_sum.append_to_last_user(["p"+ bot_investigation+" is a Fascist"])
+                game_sum.append_to_last_user("p"+ bot_investigation+" is a Fascist")
             else:
-                game_sum.append_to_last_user(["p"+ bot_investigation+" is a Liberal"])
+                game_sum.append_to_last_user("p"+ bot_investigation+" is a Liberal")
         else:
             human_player_investigation = input("Which player did player "+player_number+" investigate? Answer only with their number.")
             if human_player_investigation == "1":
                 input("Press any key to show the bot's role.")
                 if(bot_role in ["Hitler","Fascist"]):
                     print("The bot is a Fascist!")
-                    game_sum.append_to_last_user(["As President, p"+ player_number+" has investigated you and learned that you are a Fascist!"])
+                    game_sum.append_to_last_user("As President, p"+ player_number+" has investigated you and learned that you are a Fascist!")
                 else:
                     print("The bot is a Liberal.")
-                    game_sum.append_to_last_user(["As President, p"+ player_number+" has investigated you and learned that you are a Liberal."])
-            game_sum.append_to_last_user(["As President, p"+ player_number+" has investigated "+human_player_investigation+" and learned their loyalty."])
+                    game_sum.append_to_last_user("As President, p"+ player_number+" has investigated you and learned that you are a Liberal.")
+            game_sum.append_to_last_user("As President, p"+ player_number+" has investigated "+human_player_investigation+" and learned their loyalty.")
     #EXECUTION
     elif (num_fascist_policies in [4,5]):
         if player_number == 1:
@@ -150,20 +165,20 @@ def check_for_special_power(num_players, num_fascist_policies, player_number, bo
         else:
             human_player_execution = input("Which player did player "+player_number+" execute? Answer only with their number.")
             dead_players.append(int(human_player_execution))
-            game_sum.append_to_last_user(["As President, p"+ player_number+" has executed p"+human_player_execution+". p"+human_player_execution+" is no longer in the game."])
+            game_sum.append_to_last_user("As President, p"+ player_number+" has executed p"+human_player_execution+". p"+human_player_execution+" is no longer in the game.")
     return dead_players
 
 def make_read_policies_question(read_cards, government_partner):
     policies_question = ""
     if len(read_cards) == 2:
-        policies_question = "You are Chancellor. Your President, p"+government_partner+", has discarded a Policy tile and privately passed you the remaining two Policy tiles: "
+        policies_question = "You are Chancellor. Your President, p"+government_partner+", has discarded a Policy tile and privately passed you the remaining two Policy tiles. They are: "
     else:
-        policies_question = "You are President. You must privately discard one card and pass the rest to your Chancellor, p"+government_partner+". The three Policy tiles you have to choose from are: "
+        policies_question = "You are President. You must privately discard one tile and pass the remaining two to your Chancellor, p"+government_partner+". The three Policy tiles you have to choose from are: "
     for i, policy in enumerate(read_cards):
         if policy == "fascist":
-            policies_question += str(i)+")Fascist "
+            policies_question += str(i+1)+")Fascist "
         else:
-            policies_question += str(i)+")Liberal " 
+            policies_question += str(i+1)+")Liberal " 
     if len(read_cards) == 2:
          policies_question += ". Which Policy tile would you like to enact? Answer only with the number of the Policy tile that you want to play."
     else:
@@ -219,19 +234,19 @@ def tell_bot_fellow_fascists(player_roles, num_players):
     known_fascists = []
     if num_players in [5,6]:
         if player_roles[0] == "Fascist":
-            game_sum.append_to_last_user(["Hitler is p"+hitler_index[0]])
+            game_sum.append_to_last_user("Hitler is p"+str(hitler_index[0]))
             known_fascists.append(hitler_index[0])
         elif player_roles[0] == "Hitler":
-            game_sum.append_to_last_user(["The regular fascist is p"+fascist_index[0]])
+            game_sum.append_to_last_user("The regular fascist is p"+str(fascist_index[0]))
             known_fascists.append(fascist_index[0])
     elif num_players in [7,8]:
         if player_roles[0] == "Fascist":
-            game_sum.append_to_last_user(["Hitler is p"+hitler_index[0]+" and the other fascist is p"+fascist_index[1]])
+            game_sum.append_to_last_user("Hitler is p"+str(hitler_index[0])+" and the other fascist is p"+str(fascist_index[1]))
             known_fascists.append(hitler_index[0])
             known_fascists.append(fascist_index[1])
     elif num_players in [9,10]:
         if player_roles[0] == "Fascist":
-            game_sum.append_to_last_user(["Hitler is p"+hitler_index[0]+" and the other fascists are p"+fascist_index[1]+" and p"+fascist_index[2]])
+            game_sum.append_to_last_user("Hitler is p"+str(hitler_index[0])+" and the other fascists are p"+str(fascist_index[1])+" and p"+str(fascist_index[2]))
             known_fascists.append(hitler_index[0])
             known_fascists.append(fascist_index[1])
             known_fascists.append(fascist_index[2])
@@ -242,6 +257,7 @@ def show_game_state(game):
         print(key, ":", value)
 
 def main():
+    game_sum.append(["system","You are an cunning game theorist about to play the game Secret Hitler."])
     game = {}  
     game["game_is_going"] = True
     game["num_players"] = int(input("Enter the number of players: "))
@@ -249,94 +265,105 @@ def main():
     game["known_fascists"] = tell_bot_fellow_fascists(game["player_roles"], game["num_players"])
     game["bot_role"] = game["player_roles"][0]
     game["starting_player"] = random.randint(1, game["num_players"]) 
-    game["current_player"] = game["starting_player"]
+    game["current_president"] = game["starting_player"]
     game["num_fascist_policies"] = 0
     game["num_liberal_policies"] = 0
     game["dead_players"] = []
     show_game_state(game)
     while (game["game_is_going"]):
-        if game["current_player"] == 1: #bot's turn
+        current_president_str = str(game["current_president"])
+        if game["current_president"] == 1: #bot's turn
             print("bot's turn")
-            bot_nomination = handle_request("who do you nominate as chancellor? answer with their player number only.")
-            print("bot nominated ", bot_nomination) #maybe it will mess up the bot_nomination, there should be a way to ask again or something
+            bot_nomination_for_chancellor = handle_request("who do you nominate as chancellor? answer with their player number only.")
+            print("bot nominated ", bot_nomination_for_chancellor) #maybe it will mess up the bot_nomination_for_chancellor, there should be a way to ask again or something
             input("Press any key to see how the bot votes.")
             bot_vote = handle_request("How do you vote? Answer with a single word, Yes or No.")
             passed = input_vote_results(game["num_players"], bot_vote, game["dead_players"])
             if passed:
-                #game["current_chancellor"] = bot_nomination
                 if game["bot_role"] == "Hitler" and game["num_fascist_policies"] == 3:
-                    print("Fascists win due to Hitlerbot being President!")
+                    print("Fascists win due to Hitlerbot being President!") #an ominous sound here would be nice
                 cards_seen = read_gov_policies.show(3)
-                if(game["num_fascist_policies"] == 5):
-                    human_chancellor_veto_offer = input("Does p"+game["current_player"]+" want to veto? (Y)es or (N)o?")
+                policies_vetoed = False
+                if(game["num_fascist_policies"] == 5): #veto possibility
+                    human_chancellor_veto_offer = input("Does p"+current_president_str+" want to offer a veto? (Y)es or (N)o?")
                     if (human_chancellor_veto_offer in ["Y","y"]):                        
-                        if (humans_nomination_for_chancellor == "1"):
-                            determine_if_president_bot_wants_to_veto(cards_seen, game["bot_role"], bot_nomination, game["known_fascists"], game["fascist_policies"], game["liberal_policies"])
-                        else:
-                            human_president_veto_response = input("Does p"+humans_nomination_for_chancellor+" want to veto? (Y)es or (N)o?")
+                        determine_if_president_bot_wants_to_veto(cards_seen, game["bot_role"], bot_nomination_for_chancellor, game["known_fascists"], game["fascist_policies"], game["liberal_policies"])
                     else:
                         print("human chancellor didn't want to veto.")                                
                 if not policies_vetoed:
-                    bot_president_policy_selection = handle_request(make_read_policies_question(cards_seen, bot_nomination))
+                    bot_president_policy_selection = handle_request(make_read_policies_question(cards_seen, bot_nomination_for_chancellor))
                     print("bot selected policy #", bot_president_policy_selection)
-                    #THIS IS THE POINT WHERE THE POLICY SELECTED BY THE BOT IS DISCARDED AND THE REMAINING TWO ARE PASSED TO CHANCELLOR,
-                    #THERE MAY BE MORE LOGIC THAT NEEDS TO BE WORKED OUT HERE
-            game["current_player"] = increase_current_player(game["current_player"], game["num_players"])
+                    chancellor_policy_selection = input("What type of policy did p"+bot_nomination_for_chancellor+" select? (F)ascist or (L)iberal?")
+                    cards_seen.remove(cards_seen[int(bot_president_policy_selection)-1])
+                    game_sum.append_to_last_user("You passed p"+bot_nomination_for_chancellor+" the following Policy tiles: "+cards_seen[0]+", "+cards_seen[1]+" and they played a ")
+                    if chancellor_policy_selection in ["F","f"]:
+                        game_sum.append_to_last_user("fascist policy tile.")
+                        game["dead_players"] = check_for_special_power(game["fascist_policies"], game["current_president"], game["bot_role"], game["dead_players"])
+                    else:
+                        game_sum.append_to_last_user("liberal policy tile.")
+            game["current_president"] = increase_current_president(game["current_president"], game["num_players"])
         else:
-            print("human's turn")
-            humans_nomination_for_chancellor = input("who do you nominate as chancellor? answer with their player number only.")
+            humans_nomination_for_chancellor = input("Player "+current_president_str+", who do you nominate as chancellor? answer with their player number only: ")
             if humans_nomination_for_chancellor == "1":
-                game_sum.append_to_last_user(["P"+game["current_player"]+" has nominated you as Chancellor"])
+                game_sum.append_to_last_user("P"+current_president_str+" has nominated you as Chancellor")
             else:
-                game_sum.append_to_last_user(["P"+game["current_player"]+" has nominated P"+humans_nomination_for_chancellor+" as Chancellor"])
+                game_sum.append_to_last_user("P"+current_president_str+" has nominated P"+humans_nomination_for_chancellor+" as Chancellor")
             input("Press any key to see how the bot votes.")
             bot_vote = handle_request("How do you vote?")
             passed = input_vote_results(game["num_players"], bot_vote, game["dead_players"])
             if passed:
                 #RIGHT NOW THE BOT GETS THE ELECTRION RESULTS, BUT IS NOT TOLD WHO THE CHANCELLOR IS - MAYBE WE WANT TO DO THIS TOO
-                if game["player_roles"][game["current_player"]] == "Hitler" and game["num_fascist_policies"] == 3:
-                    print("Fascists Win due to Player "+game["current_player"]+" being elected President as Hitler!") #a sound effect would be nice so that everyone learns that the game is over together
+                if game["player_roles"][game["current_president"]] == "Hitler" and game["num_fascist_policies"] == 3:
+                    print("Fascists Win due to Player "+current_president_str+" being elected President as Hitler!") #a sound effect would be nice 
                 if humans_nomination_for_chancellor == "1":
                     cards_seen = read_gov_policies.show(2)
+                policies_vetoed = False
                 if(game["num_fascist_policies"] == 5):
-                    policies_vetoed = check_for_bot_chancellor_veto(cards_seen, game["bot_role"], bot_nomination, game["known_fascists"], game["fascist_policies"], game["liberal_policies"])
+                    if humans_nomination_for_chancellor == "1":
+                        policies_vetoed = check_for_bot_chancellor_veto(cards_seen, game["bot_role"], [game["current_president"]], game["known_fascists"], game["fascist_policies"], game["liberal_policies"])
+                    else:
+                        human_president_veto_response = input("Does p"+humans_nomination_for_chancellor+" want to veto? (Y)es or (N)o?")
+                        if (human_president_veto_response in ["Y","y"]):
+                            policies_vetoed = True
                 if not policies_vetoed:
-                    if humans_nomination_for_chancellor == "1": # I JUST DROPPED THIS WHOLE CONDITIONAL IN HERE WITHOUT CHECKING IT, I SHOULD MAKE SURE IT IS GOOD
-                        bot_chancellor_policy_selection = handle_request(make_read_policies_question(cards_seen, bot_nomination))
+                    if humans_nomination_for_chancellor == "1":
+                        bot_chancellor_policy_selection = handle_request(make_read_policies_question(cards_seen, game["current_president"]))
                         print("bot selected policy #", bot_chancellor_policy_selection)
                         bots_card = input("what card does the bot play? (F)ascist or (L)iberal?")
                         if bots_card == "F" or bots_card == "f":
                             bots_card = "fascist"
                         else:
                             bots_card = "liberal"
-                        game_sum.append_to_last_user(["You played a "+bots_card+" policy."])
+                        game_sum.append_to_last_user("You played a "+bots_card+" policy.")
                         if bots_card == "fascist":
                             game["fascist_policies"] += 1
-                            game["dead_players"] = check_for_special_power(game["fascist_policies"], game["current_player"], game["bot_role"], game["dead_players"])
+                            game["dead_players"] = check_for_special_power(game["fascist_policies"], game["current_president"], game["bot_role"], game["dead_players"])
                         else:
                             game["liberal_policies"] += 1
-                        game["game_is_going"] = check_for_policy_game_completion(game["fascist_policies"], game["current_player"])
+                        game["game_is_going"] = check_for_policy_game_completion(game["fascist_policies"], game["current_president"])
                     else:
                         human_chancellor_policy_selection = input("what card does the p"+humans_nomination_for_chancellor+" play? (F)ascist or (L)iberal?")
                         if human_chancellor_policy_selection == "F" or human_chancellor_policy_selection == "f":
                             human_chancellor_policy_selection = "Fascist"
-                        game_sum.append_to_last_user(["p"+humans_nomination_for_chancellor+" plays a "+human_chancellor_policy_selection+" Policy tile."])
+                        else:
+                            human_chancellor_policy_selection = "Liberal"
+                        game_sum.append_to_last_user("p"+humans_nomination_for_chancellor+" plays a "+human_chancellor_policy_selection+" Policy tile.")
 
 #CARRY ON FROM BELOW HERE
 
-                    bots_card = input("what card does the bot play? (F)ascist or (L)iberal?")
-                    if bots_card == "F" or bots_card == "f":
-                        bots_card = "fascist"
-                    else:
-                        bots_card = "liberal"
-                    game_sum.append_to_last_user(["You played a "+bots_card+" policy."])
-                    if bots_card == "fascist":
-                        game["fascist_policies"] += 1
-                        game["dead_players"] = check_for_special_power(game["fascist_policies"], game["current_player"], game["bot_role"], game["dead_players"])
-                    else:
-                        game["liberal_policies"] += 1
-                    game["game_is_going"] = check_for_policy_game_completion(game["fascist_policies"], game["current_player"])
-            game["current_player"] = increase_current_player(game["current_player"], game["num_players"])
+                    # bots_card = input("what card does the bot play? (F)ascist or (L)iberal?")
+                    # if bots_card == "F" or bots_card == "f":
+                    #     bots_card = "fascist"
+                    # else:
+                    #     bots_card = "liberal"
+                    # game_sum.append_to_last_user("You played a "+bots_card+" policy."])
+                    # if bots_card == "fascist":
+                    #     game["fascist_policies"] += 1
+                    #     game["dead_players"] = check_for_special_power(game["fascist_policies"], game["current_president"], game["bot_role"], game["dead_players"])
+                    # else:
+                    #     game["liberal_policies"] += 1
+                    # game["game_is_going"] = check_for_policy_game_completion(game["fascist_policies"], game["current_president"])
+            game["current_president"] = increase_current_president(game["current_president"], game["num_players"])
 
     #while (game_is_going):
 

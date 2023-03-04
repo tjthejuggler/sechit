@@ -12,6 +12,12 @@ bot needs to be asked to vote for human nomination
 a way to override everything and talk directly to the bot with input for special situations
     veto needs to be hardcoded or handled like this
 
+bot is not allowed to nominate people in the last government(unless there are 5 players, then president can be nominated)
+
+keep a running token size for the game summary
+
+keep track of token sent/received count for entire game
+
 questions:
 what is differnce chatgpt turbo and 301?
 
