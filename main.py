@@ -78,7 +78,7 @@ def handle_request(request_message):
 
 def input_vote_results(bot_vote, game):
     vote_results = ""
-    print('game', game)
+    print('game3', game)
     for voting_player in range(1, game["num_players"]+1):
         if voting_player in game["living_players"]:
             players_vote = ""
@@ -87,15 +87,14 @@ def input_vote_results(bot_vote, game):
                     players_vote = "Y"
                 else:
                     players_vote = "N"
-                players_vote = bot_vote
             else:
                 players_vote = user_input(f"Player {voting_player}: (J)a / (N)ein? ", game)
                 if players_vote.lower() in ('j', 'y'):
                     players_vote = "Y"
                 else:
                     players_vote = "N"
-            vote_results += "p"+str(voting_player) +"-"+ players_vote
-    game_sum.append_to_last_user("vote_results",vote_results)
+            vote_results += "p"+str(voting_player) +"-"+ players_vote + " "
+    game_sum.append_to_last_user("vote_results: "+vote_results)
     print(game_sum.read())
     passed = vote_results.count("Y") > vote_results.count("N")
     return passed
@@ -262,10 +261,11 @@ def show_game_state(game):
         print(key, ":", value)
 
 def user_input(text, game):
+    #print('game8',game)
     if "Enter the number of players:" in text:
         allowed_answers = ["5","6","7","8","9","10"]
     elif "nominate" in text.lower():
-        allowed_answers = game["living_players"]
+        allowed_answers = list(game["living_players"])
         allowed_answers.remove(game["current_president"])
         if game["previous_president"] != 0:
             if len(game["living_players"]) > 5:
@@ -273,7 +273,7 @@ def user_input(text, game):
             allowed_answers.remove(game["previous_chancellor"])
         allowed_answers = [str(num) for num in allowed_answers]
     elif "execute" in text.lower() or "investigate" in text.lower():
-        allowed_answers = game["living_players"]
+        allowed_answers = list(game["living_players"])
         allowed_answers.remove(game["current_president"])
         allowed_answers = [str(num) for num in allowed_answers]
     elif "(Y)es" in text or "(J)a" in text:
@@ -282,7 +282,9 @@ def user_input(text, game):
         allowed_answers = ["f", "l"]
     else:
         "unkown question"
+    #print('game6',game)
     while True:
+        #print('game7',game)
         player_input = input(text)
         if player_input.lower() in allowed_answers:
             break
@@ -341,21 +343,23 @@ def main():
                         game_sum.append_to_last_user("liberal policy tile.")
             game["current_president"] = increase_current_president(game["current_president"], game["num_players"])
         else:
-            print('game1', game)
+            #print('game1', game)
             humans_nomination_for_chancellor = user_input("Player "+current_president_str+", who do you nominate as chancellor? answer with their player number only: ", game)
+            #print('game5',game)
             if humans_nomination_for_chancellor == "1":
                 game_sum.append_to_last_user("P"+current_president_str+" has nominated you as Chancellor")
             else:
                 game_sum.append_to_last_user("P"+current_president_str+" has nominated P"+humans_nomination_for_chancellor+" as Chancellor")
+            #print('game4',game)
             input("Press any key to see how the bot votes.")
             bot_vote = handle_request("How do you vote?")
             passed = input_vote_results(bot_vote, game)
             if passed:
-                print('game2', game)
+                #print('game2', game)
                 game["previous_president"] = game["current_president"]
                 game["previous_chancellor"] = humans_nomination_for_chancellor
                 #RIGHT NOW THE BOT GETS THE ELECTRION RESULTS, BUT IS NOT TOLD WHO THE CHANCELLOR IS - MAYBE WE WANT TO DO THIS TOO
-                if game["player_roles"][game["current_president"]] == "Hitler" and game["num_fascist_policies"] == 3:
+                if game["player_roles"][game["current_president"]-1] == "Hitler" and game["num_fascist_policies"] == 3:
                     print("Fascists Win due to Player "+current_president_str+" being elected President as Hitler!") #a sound effect would be nice 
                 if humans_nomination_for_chancellor == "1":
                     cards_seen = read_gov_policies.show(2)

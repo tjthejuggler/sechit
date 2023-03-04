@@ -12,8 +12,8 @@ def show(num_cards):
     upper_red_wrap = (180, 255, 255)
 
     # Define the range of blue color in HSV
-    lower_blue = (100, 50, 50)
-    upper_blue = (130, 255, 255)
+    lower_blue = (20, 50, 50)
+    upper_blue = (160, 255, 255)
 
     # Initialize variables to keep track of the number of red and blue pixels
     num_red = 0
@@ -48,8 +48,8 @@ def show(num_cards):
             percentage_blue = (num_blue / total_pixels) * 100
 
             # Print the percentage of red and blue pixels
-            print("Percentage of red pixels:", percentage_red)
-            print("Percentage of blue pixels:", percentage_blue)
+            #print("Percentage of red pixels:", percentage_red)
+            #print("Percentage of blue pixels:", percentage_blue)
 
             # Check if the spacebar is pressed and determine which color is more dominant
             if cv2.waitKey(1) == ord(' '):
@@ -75,3 +75,5 @@ def show(num_cards):
 
 
     return(read_cards)
+
+print(show(5))

@@ -20,6 +20,10 @@ keep a running token size for the game summary
 
 keep track of token sent/received count for entire game
 
+must keep track of 3 failed votes
+
+instead of giving bot vote results with Y / N , maybe give it results with Yes / No
+
 questions:
 what is differnce chatgpt turbo and 301?
 
