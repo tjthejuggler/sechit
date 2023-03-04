@@ -1,20 +1,9 @@
-FIGURE OUT BUG THAT IS KILLING THE CURRENT PRESIDENT
-
-i think things can be way simplified, the only real rotating turn is the president nominations,
- i think we can just have the one loop and then ask for bot/human input as needed
-
-assign a player # to G or randomly pick the first player of the game and make G always be player 1
-
-the vote turn type can be removed since it happens simultaneously
-bot voting needs added
-
-input vote result needs to be added to human nomination
-bot needs to be asked to vote for human nomination
 
 a way to override everything and talk directly to the bot with input for special situations
-    veto needs to be hardcoded or handled like this
+    make an extra option at any input point that allows the user to directly communicate with bot
 
 bot is not allowed to nominate people in the last government(unless there are 5 players, then president can be nominated)
+    the bot should be told their options when nominating
 
 keep a running token size for the game summary
 
@@ -22,26 +11,30 @@ keep track of token sent/received count for entire game
 
 must keep track of 3 failed votes
 
-instead of giving bot vote results with Y / N , maybe give it results with Yes / No
+it should ask which player goes first
 
-questions:
-what is differnce chatgpt turbo and 301?
+figure out a way to make a testbench for this
 
-
-thoughts:
-only contact G when it needs to make a decision
+BOT TALK:
 every time an a game event happens, bot could be asked if it has something it would like to say
-
-bot should be told that if they are liberal then they should never lie, and if they are facist then they should be deceptive
-
-maybe keep track of all stats and the phrasing used to interact with the bot, and then use tht to improve the bot
-
-a seperate instance can be used to turn player numbers into appropriate phrasing
-    this can be used to make the bot more human like and have it seem more like whatever character it is
 
 instead of immediately asking the bot for an official response, it could first be asked who it is thinking about investigating/executing to allow players to try to pursuade the bot to change its mind.
     this could also be on a randomizer, so sometimes it listens to people pursuading it.
         instead of a randomizer it could be asked if it wants to make a decision or listen to people pursuading it
+
+
+BOT STRATEGY:
+bot should be told that if they are liberal then they should never lie, and if they are facist then they should be deceptive
+
+THOUGHTS:
+
+maybe keep track of all stats and the phrasing used to interact with the bot, and then use tht to improve the bot
+
+instead of giving bot vote results with Y / N , maybe give it results with Yes / No
+
+a seperate instance can be used to turn player numbers into appropriate phrasing
+    this can be used to make the bot more human like and have it seem more like whatever character it is
+
 
 
 

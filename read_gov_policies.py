@@ -76,4 +76,3 @@ def show(num_cards):
 
     return(read_cards)
 
-print(show(5))
