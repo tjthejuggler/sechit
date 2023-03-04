@@ -1,3 +1,5 @@
+FIGURE OUT BUG THAT IS KILLING THE CURRENT PRESIDENT
+
 i think things can be way simplified, the only real rotating turn is the president nominations,
  i think we can just have the one loop and then ask for bot/human input as needed
 
