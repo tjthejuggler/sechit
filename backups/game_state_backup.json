@@ -1,1 +1,1 @@
-{"game_is_going": true, "num_players": 5, "player_roles": ["Fascist", "Liberal", "Liberal", "Hitler", "Liberal"], "known_fascists": [3], "bot_role": "Fascist", "starting_player": 3, "current_president": 4, "fascist_policies": 0, "liberal_policies": 0, "living_players": [1, 2, 3, 4, 5], "previous_president": 3, "previous_chancellor": 4}
+{"game_is_going": true, "num_players": 5, "known_fascists": [], "starting_player": 5, "current_president": 3, "fascist_policies": 0, "liberal_policies": 0, "living_players": [1, 2, 3, 4, 5], "previous_president": 0, "previous_chancellor": 0}

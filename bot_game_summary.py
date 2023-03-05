@@ -2,7 +2,7 @@ import os
 import json
 cwd = os.getcwd()
 
-class GameSummary:
+class BotGameSummary:
     def __init__(self, summary=None):
         if summary is None:
             self.summary = []
