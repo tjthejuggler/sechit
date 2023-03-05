@@ -20,7 +20,11 @@ def send_request(request_message):
     elif "How do you vote?" in last_item:
         #randomly choose yes or no
         response = random.choice(["yes", "no"])
-    else:
+    elif "2)" in last_item:
+        response = str(random.randint(1, 2))
+    elif "3)" in last_item:
+        response = str(random.randint(1, 3))
+    else: 
         response = last_item+"response"
 
     #get last item of request_message

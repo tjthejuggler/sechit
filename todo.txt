@@ -1,3 +1,9 @@
+constantly be saving game in case of crash,
+    be able to load the previous game when we start
+
+When the bot says something
+    have the option to talk to the bot before moving on
+
 
 a way to override everything and talk directly to the bot with input for special situations
     make an extra option at any input point that allows the user to directly communicate with bot
@@ -16,6 +22,12 @@ it should ask which player goes first
 figure out a way to make a testbench for this
 
 BOT TALK:
+when we have been at a cetrain point in the game for awhile, there can be a randomizer that sometimes asks the bot if they want to say something out loud, and tell them how long we have been at this stage. It can tell them to answer yes or no, if they answer yes then it will ask them what they want to say.
+
+when the bot says something that gets printed, it should also be said out loud
+
+stuff that could done by using another instance of gpt should be to save the size of the summary
+
 every time an a game event happens, bot could be asked if it has something it would like to say
 
 instead of immediately asking the bot for an official response, it could first be asked who it is thinking about investigating/executing to allow players to try to pursuade the bot to change its mind.
@@ -46,3 +58,8 @@ a text to voice api could be used to make the bot talk to the players
 
 make a new file that holds the initial prompt, load that into the main loop
 maybe make something special if the bot is player 1
+
+
+POTENTIAL TEXT TO SPEECH
+Coqui (LOCAL)
+https://youtu.be/MYRgWwis1Jk
