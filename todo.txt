@@ -1,3 +1,6 @@
+if bebugging is off and the bot looks at cards then space doesnt work to tell the bot when a card is up,
+    also bot should tell user to show cards
+
 a way to override everything and talk directly to the bot with input for special situations
     in user_input(), make a Q option that is possible no matter what the question is and have it be a way to talk to the bot directly,
         after done it that mode it should go back to the question at handle
@@ -20,6 +23,8 @@ keep a running token size for the game summary
 keep track of token sent/received count for entire game
 
 BOT TALK:
+    everything that goes through make_bot_response() could be ran through a seperate instance of gpt with the information about the bot to make it more realistic
+
 When the bot says something
     have the option to talk to the bot before moving on
 

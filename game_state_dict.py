@@ -3,14 +3,17 @@ import os
 
 
 class AutoSaveDict(dict):
-    def __init__(self, file_path, *args, **kwargs):
+    def __init__(self, file_path, debugging, *args, **kwargs):
         self.file_path = file_path
+        self.debugging = debugging
         self.parent_dir = os.path.dirname(self.file_path)
         super().__init__(*args, **kwargs)
 
     def __setitem__(self, key, value):
         super().__setitem__(key, value)
         self.save_to_file()
+        if self.debugging:
+            print(self)
 
     def save_to_file(self):
         #make a copy of self.summary

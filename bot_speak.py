@@ -6,9 +6,6 @@ import pygame
 #get current directory
 import os
 
-
-
-
 def say(text):
     cwd = os.getcwd()
     filename = text[:245].title().replace(" ","")

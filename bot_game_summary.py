@@ -3,19 +3,25 @@ import json
 cwd = os.getcwd()
 
 class BotGameSummary:
-    def __init__(self, summary=None):
+    def __init__(self, debugging, summary=None):
+        self.debugging = debugging
         if summary is None:
             self.summary = []
         else:
             self.summary = summary
-    
-    def read(self):
+   
+    def read(self):        
+        if self.debugging:
+            print("append", self.summary)
         return self.summary
-    
+
     def append(self, new_entry):
         self.summary.append({"role": new_entry[0], "content": new_entry[1]})
         #save a backup of self to a file
         self.save_to_file()
+        if self.debugging:
+            print("append", self.summary)
+        
 
     def append_to_last_user(self, new_entry):
         if self.summary[-1]["role"] == "user":
@@ -23,7 +29,9 @@ class BotGameSummary:
         else:
             self.summary.append({"role": "user", "content": new_entry})
         self.save_to_file()
-        print('self.summary', self.summary)
+        if self.debugging:
+            print("append_to_last_user", self.summary)
+
 
     # def save_to_file(self):
     #     with open(cwd+'/backups/game_summary_backup.json', 'w') as file:

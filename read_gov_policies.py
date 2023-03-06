@@ -1,6 +1,9 @@
 import cv2
+import numpy as np
 
-def show(num_cards):
+
+
+def show(num_cards, debugging):
 
     # Initialize the video capture object
     cap = cv2.VideoCapture(0)
@@ -54,17 +57,28 @@ def show(num_cards):
             # Check if the spacebar is pressed and determine which color is more dominant
             if cv2.waitKey(1) == ord(' '):
                 if percentage_red > percentage_blue:
-                    print("Mostly red!")
+                    if debugging:
+                        print("Mostly red!")
                     read_cards.append("fascist")
                 else:
-                    print("Mostly blue!")
+                    if debugging:
+                        print("Mostly blue!")
                     read_cards.append("liberal")
                 break
 
             # Display the frame and the masks
-            cv2.imshow('frame', frame)
-            cv2.imshow('red_mask', red_mask)
-            cv2.imshow('blue_mask', blue_mask)
+            if debugging:
+                cv2.imshow('frame', frame)
+                cv2.imshow('red_mask', red_mask)
+                cv2.imshow('blue_mask', blue_mask)
+            else:
+                # Create a black window with a size of 500x500 pixels
+                black_image = np.zeros((500, 500, 3), np.uint8)
+                # Show the black window
+                cv2.imshow('Black Window', black_image)
+
+                
+
 
     # Release the video capture object and close all windows
     cap.release()
