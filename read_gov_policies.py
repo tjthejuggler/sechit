@@ -55,10 +55,10 @@ def show(num_cards):
             if cv2.waitKey(1) == ord(' '):
                 if percentage_red > percentage_blue:
                     print("Mostly red!")
-                    read_cards.append("red")
+                    read_cards.append("fascist")
                 else:
                     print("Mostly blue!")
-                    read_cards.append("blue")
+                    read_cards.append("liberal")
                 break
 
             # Display the frame and the masks

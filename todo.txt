@@ -1,27 +1,28 @@
-constantly be saving game in case of crash,
-    be able to load the previous game when we start
-
-When the bot says something
-    have the option to talk to the bot before moving on
-
-
 a way to override everything and talk directly to the bot with input for special situations
-    make an extra option at any input point that allows the user to directly communicate with bot
+    in user_input(), make a Q option that is possible no matter what the question is and have it be a way to talk to the bot directly,
+        after done it that mode it should go back to the question at handle
 
-bot is not allowed to nominate people in the last government(unless there are 5 players, then president can be nominated)
-    the bot should be told their options when nominating
+there should be a debug mode and a real game mode
+    there should be way fewer prints in play mode and history should be deleted
+    when the bot is looking at cards it should not show what the bot sees
+
+is there a way that the bot could have a face with a mouth that moves to the words?
+    the face could be randomly generated
+
+figure out a way to make a testbench for this
+
+HISTORY SAVING:
+When a game ends, save the game history to a file
+    the file should be named with the date and time
 
 keep a running token size for the game summary
 
 keep track of token sent/received count for entire game
 
-must keep track of 3 failed votes
-
-it should ask which player goes first
-
-figure out a way to make a testbench for this
-
 BOT TALK:
+When the bot says something
+    have the option to talk to the bot before moving on
+
 when we have been at a cetrain point in the game for awhile, there can be a randomizer that sometimes asks the bot if they want to say something out loud, and tell them how long we have been at this stage. It can tell them to answer yes or no, if they answer yes then it will ask them what they want to say.
 
 when the bot says something that gets printed, it should also be said out loud

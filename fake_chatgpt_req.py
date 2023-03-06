@@ -15,8 +15,9 @@ def send_request(request_message):
 
     print("last_item", last_item)
 
-    if last_item == "who do you nominate as chancellor? answer with their player number only.":
-        response = str(random.randint(2, num_players))
+    if "nominate" in last_item:
+        choices = [int(char) for char in last_item if char.isdigit()]
+        response = str(random.choice(choices))
     elif "How do you vote?" in last_item:
         #randomly choose yes or no
         response = random.choice(["yes", "no"])

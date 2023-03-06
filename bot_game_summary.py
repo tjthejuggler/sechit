@@ -23,6 +23,7 @@ class BotGameSummary:
         else:
             self.summary.append({"role": "user", "content": new_entry})
         self.save_to_file()
+        print('self.summary', self.summary)
 
     # def save_to_file(self):
     #     with open(cwd+'/backups/game_summary_backup.json', 'w') as file:
