@@ -1,20 +1,32 @@
-if bebugging is off and the bot looks at cards then space doesnt work to tell the bot when a card is up,
+BOT COMMUNICATION:
+at any point i can do the next step of the game (it is shown above, type "cont" to continue the game),
+    but until then, anyone can say whatever they want, 
+        if someone mentions the name of the bot, then the bot will respond to that person
+        the game version of the bot makes summaries of the game and the talking bot sees those summaries,
+            and vice versa, the talking bot makes summaries of the conversations for their later selves, as well as for the game bot.
+            
+            
+
+f bebugging is off and the bot looks at cards then space doesnt work to tell the bot when a card is up,
     also bot should tell user to show cards
 
 a way to override everything and talk directly to the bot with input for special situations
     in user_input(), make a Q option that is possible no matter what the question is and have it be a way to talk to the bot directly,
         after done it that mode it should go back to the question at handle
 
-there should be a debug mode and a real game mode
-    there should be way fewer prints in play mode and history should be deleted
-    when the bot is looking at cards it should not show what the bot sees
-
 is there a way that the bot could have a face with a mouth that moves to the words?
     the face could be randomly generated
 
+
+
 figure out a way to make a testbench for this
 
+
+
+
 HISTORY SAVING:
+
+
 When a game ends, save the game history to a file
     the file should be named with the date and time
 
@@ -39,6 +51,26 @@ every time an a game event happens, bot could be asked if it has something it wo
 instead of immediately asking the bot for an official response, it could first be asked who it is thinking about investigating/executing to allow players to try to pursuade the bot to change its mind.
     this could also be on a randomizer, so sometimes it listens to people pursuading it.
         instead of a randomizer it could be asked if it wants to make a decision or listen to people pursuading it
+
+whenever it has a choice to make, it could be asked if it has anything it would like to say or ask anyone or everyone.
+
+it can be fed a constant feed of what everyone is saying, even if it is too long, it just needs to be told the game state before it makes decisions. In the information it gets, it can be given description of what has been talked about.
+
+TALK TO BOT:
+what if we transcribe everything, pick out the words that are most common and feed those to the bot, what if we transcribe everything, pick out the words that are most common and feed those to the bot, 
+
+
+
+
+
+Nothing should happen automatically, both sides should be given a chance to speak before an action happens
+
+it responds to its name, which gets detected without him knowing, and causes an event to happen, he gets notified of the event and can respond to it
+    also "everyone" should be a name that has a chance of being triggered by.
+        this can be done by privately asking hiim if he has anything he would like to stay
+
+there can be a timer setup, after the bot has said something, if anything is said soon enough after then it will go to the bot to respond to again,
+    but after enough time has gone by
 
 
 BOT STRATEGY:
