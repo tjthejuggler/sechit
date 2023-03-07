@@ -11,6 +11,7 @@ import json
 import os
 import threading
 import time
+from datetime import datetime
 
 debugging = False
 
@@ -271,13 +272,15 @@ def tell_bot_fellow_fascists(player_roles, num_players):
             known_fascists.append(fascist_index[2])
     return(known_fascists)   
 
-# def show_game_state(game):
-#     for key, value in game.items():
-#         debug_log(key, ":", value)
+def check_if_bot_want_to_talk(game):
+    bot_wants_to_talk = False
+    if "player_roles" in game:
+        bot_wants_to_talk_response = ask_bot("Is there anything you would like to say or ask? answer with a single word, Yes or No.")
+        if bot_wants_to_talk_response.lower().startswith(('y', 'j')) or 'yes' in bot_wants_to_talk_response.lower():    
+            bot_wants_to_talk = True
+    return bot_wants_to_talk
 
 def conversation_mode(game, initiation):
-    #clear_console_lines(1)
-
     possible_player_numbers = [2,3,4,5,6,7,8,9,10]
     if "living_players" in game:
         possible_player_numbers = list(game["living_players"])
@@ -293,29 +296,16 @@ def conversation_mode(game, initiation):
         else:
             conversation_input = input("CONVERSATION MODE(enter to switch): Enter your player number, followed by your comment: ")
             player_number = conversation_input.split()[0] if len(conversation_input.split()) > 1 else ""
-            # print("player number: "+player_number)
-            # print("living players: "+str(possible_player_numbers))
             if conversation_input == "":
                 clear_console_lines(1)
                 break
             elif player_number.isdigit() and int(player_number) in possible_player_numbers:
-                #print("living players: "+str(game["living_players"]))
                 bot_response = ask_bot("p"+player_number+" says: "+conversation_input.split(None, 1)[1])
                 make_bot_response(bot_response)
                 input("Press Enter to continue...")
                 clear_console_lines(3)
             else:
                 clear_console_lines(1)
-
-
-def check_if_bot_want_to_talk(game):
-    bot_wants_to_talk = False
-    if "player_roles" in game:
-        bot_wants_to_talk_response = ask_bot("Is there anything you would like to say or ask? answer with a single word, Yes or No.")
-        if bot_wants_to_talk_response.lower().startswith(('y', 'j')) or 'yes' in bot_wants_to_talk_response.lower():    
-            bot_wants_to_talk = True
-    return bot_wants_to_talk
-
 
 def handle_user_response(text, game):
     if "Enter the number of players:" in text:
@@ -368,7 +358,6 @@ def handle_user_response(text, game):
     return player_input
 
 def make_bot_response(text):
-    # create a new thread to handle the bot response
     print('Bot: '+text)
     bot_response_thread = threading.Thread(target=bot_response, args=(text,))
     bot_response_thread.start()
@@ -377,8 +366,6 @@ def bot_response(text):
     bot_speak.say(text)
 
 def start_new_game(game):
-    #game = auto_dict.AutoSaveDict('game_state_backup.json')
-    #bot_game_sum.append(["system","You are an cunning game theorist about to play the game Secret Hitler."]) 
     game["game_is_going"] = True
     game["num_players"] = int(handle_user_response("Enter the number of players: ",{}))
     game["current_president"] = int(handle_user_response("Enter the starting player: ",game))
@@ -443,6 +430,18 @@ def handle_bot_nomination(game):
     make_bot_response("I nominate player "+bot_nomination_for_chancellor+" as chancellor.")
     return bot_nomination_for_chancellor
 
+def save_game_history(game):
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y_%H:%M:%S")
+    with open(cwd+"/backups/game_state_backup.json", "r") as file1, open(cwd+"/backups/game_summary_backup.json", "r") as file2, open(cwd+"/backups/game_summary_backup.txt", "r") as file3:
+        file1_contents = json.load(file1)
+        file2_contents = json.load(file2)
+        file3_contents = file3.read()
+    with open(cwd+"/history/"+dt_string+".txt", "w") as output_file:
+        output_file.write(json.dumps(file1_contents))
+        output_file.write(json.dumps(file2_contents))
+        output_file.write(file3_contents)
+
 def main():
     clear_console_lines(2)
     game = game_state_dict.AutoSaveDict(cwd+'/backups/game_state_backup.json', debugging)
@@ -499,12 +498,8 @@ def main():
                 bot_game_sum.append_to_last_user("P"+str(game["current_president"])+" has nominated P"+humans_nomination_for_chancellor+" as Chancellor")
             #debug_log('game4 '+game)
             bot_vote = handle_voting(game)
-            # input("Press any key to see how the bot votes.")
-            # bot_vote = ask_bot("How do you vote?")
-            # make_bot_response("I vote "+bot_vote+" for this government.")
             passed = input_vote_results(bot_vote, game)
             if passed:
-                #debug_log('game2 '+ game)
                 game = election_passed(game, humans_nomination_for_chancellor)
                 #RIGHT NOW THE BOT GETS THE ELECTRION RESULTS, BUT IS NOT TOLD WHO THE CHANCELLOR IS - MAYBE WE WANT TO DO THIS TOO
                 if game["player_roles"][game["current_president"]-1] == "Hitler" and game["fascist_policies"] == 3:
@@ -544,6 +539,9 @@ def main():
             else:
                 game["failed_elections"] += 1
             game["current_president"] = increase_current_president(game["current_president"], game["num_players"])
+
+    save_game_history(game, bot_game_sum)
+
 #CARRY ON FROM BELOW HERE
 
                     # bots_card = input("what card does the bot play? (F)ascist or (L)iberal?")
@@ -558,10 +556,7 @@ def main():
                     # else:
                     #     game["liberal_policies"] += 1
                     # game["game_is_going"] = check_for_policy_game_completion(game["fascist_policies"], game["current_president"])
-            
 
-    #while (game_is_going):
-        event_thread.join()
 main()
 
 # create an instance of the TextVariable class

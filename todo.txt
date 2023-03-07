@@ -1,18 +1,15 @@
-right now the random interrupt stuff is a mess,
-
-
-dont interrupt when in conversation mode and we dont have to worry about text being typed getting overwritten
-
 
 TODO
 
 clean up TODO
 move some stuff from main into other files to clean up code
 
-BOT COMMUNICATION:
-at any point i can do the next step of the game (it is shown above, type "cont" to continue the game),
-    but until then, anyone can say whatever they want, 
-        if someone mentions the name of the bot, then the bot will respond to that person
+
+
+MIC COMMUNICATION
+    if someone mentions the name of the bot, then the bot will respond to that person
+        
+        
         the game version of the bot makes summaries of the game and the talking bot sees those summaries,
             and vice versa, the talking bot makes summaries of the conversations for their later selves, as well as for the game bot.
 
@@ -20,14 +17,9 @@ there can be player question limits so that each person gets a certain number of
             
 bot could randomly choose its name and a short bio, and introduce itself
 
-conversation mode could start before the game
+bot should tell user to show cards?
 
-f bebugging is off and the bot looks at cards then space doesnt work to tell the bot when a card is up,
-    also bot should tell user to show cards
 
-a way to override everything and talk directly to the bot with input for special situations
-    in user_input(), make a Q option that is possible no matter what the question is and have it be a way to talk to the bot directly,
-        after done it that mode it should go back to the question at handle
 
 is there a way that the bot could have a face with a mouth that moves to the words?
     the face could be randomly generated
@@ -120,3 +112,8 @@ https://youtu.be/MYRgWwis1Jk
 
 MULTIPLE KEYBOARDS
 try keyboard_test.py once I have multiple keyboards
+
+
+TKINTER
+    I can have multiple simultaneous input, maybe buttons for game and text box for conversation
+    the bot can talk without interrupting anything
