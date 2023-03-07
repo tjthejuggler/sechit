@@ -1,4 +1,8 @@
 
+TKINTER
+    I can have multiple simultaneous inputs, maybe buttons for game and text box for conversation
+    the bot can talk without interrupting anything
+    good hookup with art ai
 
 move some stuff from main into other files to clean up code
 
@@ -18,17 +22,11 @@ BOT PERSONNESS:
     is there a way that the bot could have a face with a mouth that moves to the words? 
         the face could be randomly generated
 
-
+we can use stable diffusion and various amounts of mouth openness somehow programatically
 
 bot should tell user to show cards?
 
-
-
-
-
 figure out a way to make a testbench for this
-
-
 
 NEEDS TESTED:
     all powers
@@ -64,9 +62,6 @@ MULTIPLE KEYBOARDS
 try keyboard_test.py once I have multiple keyboards
 
 
-TKINTER
-    I can have multiple simultaneous input, maybe buttons for game and text box for conversation
-    the bot can talk without interrupting anything
 
 MIC COMMUNICATION
     if someone mentions the name of the bot, then the bot will respond to that person

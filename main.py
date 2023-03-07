@@ -170,6 +170,18 @@ def handle_bot_execution(game):
             break
     return game
 
+def handle_special_election(game):
+    bot_special_election = ""
+    while True:#TODO THIS IS ALL WRONG
+        human_ready = handle_user_response("Are you ready to ask who the bot will nominate? (Y)es ", game)
+        if human_ready == "y":
+            bot_special_election = ask_bot("As president, you get to nominate a player to be the next president. Which player would you like to nominate? Answer only with their number.")
+            bot_special_election = get_first_numeric_digit(bot_special_election)
+            if bot_special_election == "No digit found":
+                bot_special_election = input("Enter the number of the player that the bot will nominate.")
+            make_bot_response("I will nominate player "+bot_special_election)
+            break
+
 def check_for_special_power(game):
     debug_log("CHECK SPECIAL POWERS")
     #POLICY PEEK
@@ -179,6 +191,12 @@ def check_for_special_power(game):
             bot_game_sum.append_to_last_user(make_policy_peek_sentence(cards_seen))
         else:
             bot_game_sum.append_to_last_user("As president, p"+str(game["current_president"])+" peeked at the top 3 Policy tiles.")
+    #SPECIAL ELECTION
+    elif (game["num_players"] > 6) and game["fascist_policies"] == 3:
+        if game["current_president"] == 1:
+            handle_special_election(game)
+        else:
+            print("human special election") #TODO
     #INVESTIGATION
     elif (game["num_players"] in [7,8] and game["fascist_policies"] == 2) or (game["num_players"] in [9,10] and game["fascist_policies"] in [1,2]):
         if game["current_president"] == 1:
