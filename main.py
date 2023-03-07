@@ -10,12 +10,13 @@ import game_state_dict
 import json
 import os
 import threading
-
-cwd = os.getcwd()
+import time
 
 debugging = False
 
+cwd = os.getcwd()
 bot_game_sum = BotGameSummary(debugging)
+random_bot_comment = False
 
 def debug_log(text):
     if debugging:
@@ -78,7 +79,7 @@ def ask_bot(request_message):
     for item in bot_game_sum.read(): #this is for testing only, it should actually only be seen by the assistant
         debug_log(item['role'] + ": "+item['content'])
     debug_log("-----")
-    print(bot_game_sum.read()[-1]['content'])
+    #print(bot_game_sum.read()[-1]['content'])
     return(bot_game_sum.read()[-1]['content'])
 
 def input_vote_results(bot_vote, game):
@@ -93,7 +94,7 @@ def input_vote_results(bot_vote, game):
                 else:
                     players_vote = "N"
             else:
-                players_vote = user_input(f"Player {voting_player}: (J)a / (N)ein? ", game)
+                players_vote = handle_user_response(f"Player {voting_player}: (J)a / (N)ein? ", game)
                 if players_vote.lower() in ('j', 'y'):
                     players_vote = "Y"
                 else:
@@ -105,7 +106,7 @@ def input_vote_results(bot_vote, game):
     return passed
 
 def input_human_nomination(current_president, game):
-    nomination = user_input(f"Player {current_president}: Who do you want to nominate? ", game)
+    nomination = handle_user_response(f"Player {current_president}: Who do you want to nominate? ", game)
     bot_game_sum.append_to_last_user("p"+current_president+" nominated p"+nomination)
     debug_log(json.dumps(bot_game_sum.read()))
 
@@ -152,7 +153,7 @@ def check_for_special_power(game):
             bot_investigation = ask_bot("As president, you get to learn the party of another player. Which player would you like to investigate? Answer only with their number.")
             bot_investigation = get_first_numeric_digit(bot_investigation)
             if bot_investigation == "No digit found":
-                bot_investigation = user_input("Enter the number of the player that the bot will investigate.", game)
+                bot_investigation = handle_user_response("Enter the number of the player that the bot will investigate.", game)
             make_bot_response("I will investigate player "+bot_investigation)
             investigated_players_input = input("Player"+bot_investigation+", press (F)ascist or (L)iberal, then press enter.")
             if investigated_players_input.beginswith("F") or investigated_players_input.beginswith("f"):
@@ -228,7 +229,7 @@ def check_for_bot_chancellor_veto(cards_seen, game):
         if bot_response.lower().startswith(('y', 'j')) or 'yes' in bot_response.lower():
             ask_for_veto = True
     if ask_for_veto:
-        chancellor_response = user_input("President p"+game["current_president"]+", would you like to veto? (J)a / (N)ein? ", game)
+        chancellor_response = handle_user_response("President p"+game["current_president"]+", would you like to veto? (J)a / (N)ein? ", game)
         if chancellor_response == "J" or chancellor_response == "j" or chancellor_response == "Y" or chancellor_response == "y":
             policies_vetoed = True
     return policies_vetoed
@@ -274,9 +275,82 @@ def tell_bot_fellow_fascists(player_roles, num_players):
 #     for key, value in game.items():
 #         debug_log(key, ":", value)
 
-def user_input(text, game):
+def conversation_mode(game, initiation):
+    clear_console_lines(1)
+    if initiation == "bot":
+        bot_comment = ask_bot("What would you like to say?")
+        make_bot_response(bot_comment)
+    possible_player_numbers = [2,3,4,5,6,7,8,9,10]
+    if "living_players" in game:
+        possible_player_numbers = list(game["living_players"])
+        possible_player_numbers.remove(1)
+    while True:        
+        #debug_log('game7 '+game)
+        conversation_input = input("CONVERSATION MODE(enter to switch): Enter your player number, followed by your comment: ")
+        player_number = conversation_input.split()[0] if len(conversation_input.split()) > 1 else ""
+        # print("player number: "+player_number)
+        # print("living players: "+str(possible_player_numbers))
+        if conversation_input == "":
+            clear_console_lines(1)
+            break
+        elif player_number.isdigit() and int(player_number) in possible_player_numbers:
+            #print("living players: "+str(game["living_players"]))
+            bot_response = ask_bot("p"+player_number+" says: "+conversation_input.split(None, 1)[1])
+            make_bot_response(bot_response)
+            input("Press Enter to continue...")
+            clear_console_lines(3)
+        else:
+            clear_console_lines(1)
+
+
+def random_event():
+    global input_thread
+    global random_bot_comment
+    while True:
+        if random.random() < 0.5:  # Adjust 0.1 to control the probability of the event
+            # Trigger the event here
+            print("Random event triggered!")
+            input_thread.join()
+            random_bot_comment = True
+        time.sleep(1)  # Wait for 10 seconds before checking again
+
+import threading
+
+
+
+
+# Define a function to get user input
+def get_user_input(text):
+    global user_input
+    player_input = input("GAME MODE(enter to switch): "+text)
+    return player_input
+    #user_input = input("Please enter your input: ")
+
+
+# # Start a new thread to get user input
+
+
+
+# # Wait for 5 seconds for the input thread to complete
+
+
+# # If the input thread is still running, it means the time limit has been exceeded
+# if input_thread.is_alive():
+#     print("Time limit exceeded. No input received.")
+#     exit()
+
+# # If the input thread has completed, print the user input
+# print("Your input was:", user_input)
+
+
+
+def handle_user_response(text, game):
+    global random_bot_comment
+    global input_thread
     #debug_log('game8'+game)
     #lines_to_clear = 0
+    
+    random_bot_comment = False
     if "Enter the number of players:" in text:
         allowed_answers = ["5","6","7","8","9","10"]
     elif "Enter the starting player: " in text:
@@ -309,8 +383,21 @@ def user_input(text, game):
     #debug_log('game6 '+game)
     while True:
         #debug_log('game7 '+game)
-        player_input = input(text)
-        if player_input.lower() in allowed_answers:
+        #input_thread = threading.Thread(target=get_user_input, args=(text,))
+        #input_thread.start()
+
+        #player_input = get_user_input("GAME MODE(enter to switch): "+text)
+
+        player_input = input("GAME MODE(enter to switch): "+text)
+        if player_input == '':
+            clear_console_lines(1)
+            conversation_mode(game, "human")
+        if random_bot_comment:
+            bot_wants_to_talk_response = ask_bot("Is there anything you would like to say or ask? answer with a single word, Yes or No.")
+            if bot_wants_to_talk_response.lower().startswith(('y', 'j')) or 'yes' in bot_wants_to_talk_response.lower():          
+        
+                conversation_mode(game, "bot")                            
+        elif player_input.lower() in allowed_answers:
             break
         else:
             clear_console_lines(1)
@@ -330,8 +417,8 @@ def start_new_game(game):
     #game = auto_dict.AutoSaveDict('game_state_backup.json')
     #bot_game_sum.append(["system","You are an cunning game theorist about to play the game Secret Hitler."]) 
     game["game_is_going"] = True
-    game["num_players"] = int(user_input("Enter the number of players: ",{}))
-    game["current_president"] = int(user_input("Enter the starting player: ",game))
+    game["num_players"] = int(handle_user_response("Enter the number of players: ",{}))
+    game["current_president"] = int(handle_user_response("Enter the starting player: ",game))
     game["player_roles"] = distribute_roles(game["num_players"]) 
     if game["player_roles"][0] == "Liberal":
         bot_game_sum.append(["system",'You are an cunning game theorist about to play the game Secret Hitler. You have been randomly assigned the role of "Liberal" this game. Your goal is to get 5 liberal policy tiles passed. You should try to figure out who the Fascists are and convince the other players to vote against them. You should also try to convince the other players to vote for you.'])
@@ -355,7 +442,7 @@ def election_passed(game, current_chancellor):
     return game
 
 def enact_top_policy(game):
-    enacted_top_policy = user_input("Enact the top policy, was it (F)ascist or (L)iberal? ", game)
+    enacted_top_policy = handle_user_response("Enact the top policy, was it (F)ascist or (L)iberal? ", game)
     bot_game_sum.append_to_last_user("Three consecutive governments failed, so the policy was enacted and it was a ")
     debug_log('enacted_top_policy '+enacted_top_policy)
     if enacted_top_policy == "f":
@@ -370,26 +457,59 @@ def get_eligible_chancellors(game):
     eligible_chancellors = [i for i in game["living_players"] if i != game["current_president"] and i != game["previous_chancellor"]]
     eligible_chancellors.remove(game["previous_president"]) if len(game["living_players"]) > 5 else None
     eligible_chancellors = ", ".join([f"p{number}" for number in [1, 3, 4, 5, 6, 7]])
+    return eligible_chancellors
+
+def handle_voting(game):
+    bot_vote = ""
+    while True:
+        human_ready = handle_user_response("Are you ready to see how the bot votes? (Y)es ", game)
+        if human_ready == "y":
+            bot_vote = ask_bot("How do you vote? Answer with a single word, Yes or No.")
+            make_bot_response("I vote "+bot_vote+" for this government.")            
+            break
+    return bot_vote
+
+def handle_bot_nomination(game):
+    bot_nomination_for_chancellor = ""
+    while True:
+        human_ready = handle_user_response("Are you ready to ask who the bot will nominate? (Y)es ", game)
+        if human_ready == "y":
+            eligible_chancellors = get_eligible_chancellors(game)
+            bot_nomination_for_chancellor = ask_bot("You must nominate a chancelor. Your choices are "+eligible_chancellors+". Which player do you choose? Answer with their player number only.")                
+            break
+    make_bot_response("I nominate player "+bot_nomination_for_chancellor+" as chancellor.")
+    return bot_nomination_for_chancellor
+
+# def start_random_bot_comment_thread():
+#     event_thread = threading.Thread(target=random_event)
+#     event_thread.start()
+
+#     # Your main program code here
+#     # ...
+
+#     # Wait for the event thread to finish before exiting the program
+#     event_thread.join()
 
 def main():
     clear_console_lines(2)
     game = game_state_dict.AutoSaveDict(cwd+'/backups/game_state_backup.json', debugging)
-    if user_input("\nWould you like to start a (N)ew game or (L)oad the previous one? ", {}) == "n":
+    print("\n")
+    if handle_user_response("Would you like to start a (N)ew game or (L)oad the previous one? ", {}) == "n":
         game = start_new_game(game)
     else:
         game.load_from_file()
         bot_game_sum.load_from_file()
     #show_game_state(game)
+    #start_random_bot_comment_thread()
+
+    # event_thread = threading.Thread(target=random_event)
+    # event_thread.start()
     while (game["game_is_going"]):
         if game["failed_elections"] == 3:
             game = enact_top_policy(game)
         if game["current_president"] == 1:
-            eligible_chancellors = get_eligible_chancellors(game)
-            bot_nomination_for_chancellor = ask_bot("You must nominate a chancelor. Your choices are "+eligible_chancellors+". Which player do you choose? Answer with their player number only.")
-            make_bot_response("I nominate player "+bot_nomination_for_chancellor+" as chancellor.")
-            input("Press any key to see how the bot votes.")
-            bot_vote = ask_bot("How do you vote? Answer with a single word, Yes or No.")
-            make_bot_response("I vote "+bot_vote+" for this government.")
+            bot_nomination_for_chancellor = handle_bot_nomination(game)
+            bot_vote = handle_voting(game)
             passed = input_vote_results(bot_vote, game)
             if passed:
                 game = election_passed(game, bot_nomination_for_chancellor)
@@ -399,7 +519,7 @@ def main():
                 cards_seen = read_gov_policies.show(3, debugging)
                 policies_vetoed = False
                 if(game["fascist_policies"] == 5): #veto possibility
-                    human_chancellor_veto_offer = user_input("Does p"+str(game["current_president"])+" want to offer a veto? (Y)es or (N)o?", game)
+                    human_chancellor_veto_offer = handle_user_response("Does p"+str(game["current_president"])+" want to offer a veto? (Y)es or (N)o?", game)
                     if (human_chancellor_veto_offer in ["Y","y"]):                        
                         determine_if_president_bot_wants_to_veto(cards_seen, game["player_roles"][0], bot_nomination_for_chancellor, game["known_fascists"], game["fascist_policies"], game["liberal_policies"])
                     else:
@@ -407,7 +527,7 @@ def main():
                 if not policies_vetoed:
                     bot_president_policy_selection = ask_bot(make_read_policies_question(cards_seen, bot_nomination_for_chancellor))
                     make_bot_response("Discard policy number "+bot_president_policy_selection)                    
-                    chancellor_policy_selection = user_input("Which type of policy did Player "+bot_nomination_for_chancellor+" select? (F)ascist or (L)iberal?", game)
+                    chancellor_policy_selection = handle_user_response("Which type of policy did Player "+bot_nomination_for_chancellor+" select? (F)ascist or (L)iberal?", game)
                     cards_seen.remove(cards_seen[int(bot_president_policy_selection)-1])
                     bot_game_sum.append_to_last_user("You passed p"+bot_nomination_for_chancellor+" the following Policy tiles: "+cards_seen[0]+", "+cards_seen[1]+" and they played a ")
                     if chancellor_policy_selection in ["F","f"]:
@@ -423,16 +543,17 @@ def main():
             game["current_president"] = increase_current_president(game["current_president"], game["num_players"])
         else:
             #debug_log('game1 '+ game)
-            humans_nomination_for_chancellor = user_input("Player "+str(game["current_president"])+", who do you nominate as chancellor? answer with their player number only: ", game)
+            humans_nomination_for_chancellor = handle_user_response("Player "+str(game["current_president"])+", who do you nominate as chancellor? answer with their player number only: ", game)
             #debug_log('game5 '+game)
             if humans_nomination_for_chancellor == "1":
                 bot_game_sum.append_to_last_user("P"+str(game["current_president"])+" has nominated you as Chancellor")
             else:
                 bot_game_sum.append_to_last_user("P"+str(game["current_president"])+" has nominated P"+humans_nomination_for_chancellor+" as Chancellor")
             #debug_log('game4 '+game)
-            input("Press any key to see how the bot votes.")
-            bot_vote = ask_bot("How do you vote?")
-            make_bot_response("I vote "+bot_vote+" for this government.")
+            bot_vote = handle_voting(game)
+            # input("Press any key to see how the bot votes.")
+            # bot_vote = ask_bot("How do you vote?")
+            # make_bot_response("I vote "+bot_vote+" for this government.")
             passed = input_vote_results(bot_vote, game)
             if passed:
                 #debug_log('game2 '+ game)
@@ -447,7 +568,7 @@ def main():
                     if humans_nomination_for_chancellor == "1":
                         policies_vetoed = check_for_bot_chancellor_veto(cards_seen, game)
                     else:
-                        human_president_veto_response = user_input("Does p"+humans_nomination_for_chancellor+" want to veto? (Y)es or (N)o?", game)
+                        human_president_veto_response = handle_user_response("Does p"+humans_nomination_for_chancellor+" want to veto? (Y)es or (N)o?", game)
                         if (human_president_veto_response in ["Y","y"]):
                             policies_vetoed = True
                 if not policies_vetoed:
@@ -463,7 +584,7 @@ def main():
                             game["liberal_policies"] += 1
                         game["game_is_going"] = check_for_policy_game_completion(game)
                     else:
-                        human_chancellor_policy_selection = user_input("Which type of policy did Player "+humans_nomination_for_chancellor+" play? (F)ascist or (L)iberal?", game)
+                        human_chancellor_policy_selection = handle_user_response("Which type of policy did Player "+humans_nomination_for_chancellor+" play? (F)ascist or (L)iberal?", game)
                         if human_chancellor_policy_selection == "F" or human_chancellor_policy_selection == "f":
                             human_chancellor_policy_selection = "Fascist"
                             game["fascist_policies"] += 1
@@ -492,7 +613,7 @@ def main():
             
 
     #while (game_is_going):
-
+        event_thread.join()
 main()
 
 # create an instance of the TextVariable class

@@ -10,7 +10,7 @@ def say(text):
     cwd = os.getcwd()
     filename = text[:245].title().replace(" ","")
     if not os.path.exists(cwd+"/bot_audio/"+filename+".mp3"):     
-        print("Creating audio file")  
+        #print("Creating audio file")  
         language = 'en'
         myobj = gTTS(text=text, lang=language, slow=False)
         myobj.save(cwd+"/bot_audio/"+filename+".mp3")

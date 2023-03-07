@@ -13,12 +13,12 @@ def send_request(request_message):
     last_item = request_message[-1]["content"]
     response = ""
 
-    print("last_item", last_item)
+    #print("last_item", last_item)
 
     if "nominate" in last_item:
         choices = [int(char) for char in last_item if char.isdigit()]
         response = str(random.choice(choices))
-    elif "How do you vote?" in last_item:
+    elif "Yes or No" in last_item:
         #randomly choose yes or no
         response = random.choice(["yes", "no"])
     elif "2)" in last_item:

@@ -1,11 +1,23 @@
+right now the random interrupt stuff is a mess,
+
+
+TODO
+
+clean up TODO
+move some stuff from main into other files to clean up code
+
 BOT COMMUNICATION:
 at any point i can do the next step of the game (it is shown above, type "cont" to continue the game),
     but until then, anyone can say whatever they want, 
         if someone mentions the name of the bot, then the bot will respond to that person
         the game version of the bot makes summaries of the game and the talking bot sees those summaries,
             and vice versa, the talking bot makes summaries of the conversations for their later selves, as well as for the game bot.
+
+there can be player question limits so that each person gets a certain number of interactions
             
-            
+bot could randomly choose its name and a short bio, and introduce itself
+
+conversation mode could start before the game
 
 f bebugging is off and the bot looks at cards then space doesnt work to tell the bot when a card is up,
     also bot should tell user to show cards
@@ -101,3 +113,7 @@ maybe make something special if the bot is player 1
 POTENTIAL TEXT TO SPEECH
 Coqui (LOCAL)
 https://youtu.be/MYRgWwis1Jk
+
+
+MULTIPLE KEYBOARDS
+try keyboard_test.py once I have multiple keyboards
