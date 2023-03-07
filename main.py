@@ -175,12 +175,14 @@ def handle_special_election(game):
     while True:#TODO THIS IS ALL WRONG
         human_ready = handle_user_response("Are you ready to ask who the bot will nominate? (Y)es ", game)
         if human_ready == "y":
-            bot_special_election = ask_bot("As president, you get to nominate a player to be the next president. Which player would you like to nominate? Answer only with their number.")
+            bot_special_election = ask_bot("As president, you get to choose the next President-elect. Which player would you like to choose? Answer only with their number.")
             bot_special_election = get_first_numeric_digit(bot_special_election)
             if bot_special_election == "No digit found":
                 bot_special_election = input("Enter the number of the player that the bot will nominate.")
-            make_bot_response("I will nominate player "+bot_special_election)
+            make_bot_response("I will make player "+bot_special_election+"be President.")
+            game["special_election_helper"] = -bot_special_election
             break
+    return game
 
 def check_for_special_power(game):
     debug_log("CHECK SPECIAL POWERS")
@@ -418,6 +420,7 @@ def start_new_game(game):
     game["previous_president"] = 0
     game["previous_chancellor"] = 0
     game["failed_elections"] = 0
+    game["special_election_helper"] = 0
     return game
 
 def election_passed(game, current_chancellor):
@@ -576,7 +579,19 @@ def main():
                         bot_game_sum.append_to_last_user("p"+humans_nomination_for_chancellor+" plays a "+human_chancellor_policy_selection+" Policy tile.")
             else:
                 game["failed_elections"] += 1
-            game["current_president"] = increase_current_president(game["current_president"], game["num_players"])
+            # if game["special_election_helper"] < 11:
+            #     game["current_president"] = game["special_election_helper"]
+            #     game["special_election_helper"] = 11
+            if game["special_election_helper"] < 0:
+                temp = game["current_president"]
+                game["current_president"] = game["special_election_helper"]
+                game["special_election_helper"] == -temp
+            elif game["special_election_helper"] > 0:
+                game["current_president"] = game["special_election_helper"]
+                game["special_election_helper"] = 0
+                game["current_president"] = increase_current_president(game["current_president"], game["num_players"])
+            else:
+                game["current_president"] = increase_current_president(game["current_president"], game["num_players"])
 
     save_game_history(game, bot_game_sum)
 
