@@ -37,7 +37,7 @@ def assign_roles(num_players):
 def clear_console_lines(count):
     for i in range(count):
         sys.stdout.write('\033[F\r')# use '\033[F' to move the cursor up one line, use '\r' to return the cursor to the beginning of the line
-        sys.stdout.write(' ' * 100)
+        sys.stdout.write(' ' * 150)
     sys.stdout.write('\r')
     sys.stdout.flush()
 
@@ -287,63 +287,26 @@ def conversation_mode(game, initiation):
         if initiation == "bot":
             bot_comment = ask_bot("What would you like to say?")
             make_bot_response(bot_comment)
+            input("Press Enter to continue...")
+            clear_console_lines(2)
             initiation = "human"
         else:
             conversation_input = input("CONVERSATION MODE(enter to switch): Enter your player number, followed by your comment: ")
-        player_number = conversation_input.split()[0] if len(conversation_input.split()) > 1 else ""
-        # print("player number: "+player_number)
-        # print("living players: "+str(possible_player_numbers))
-        if conversation_input == "":
-            clear_console_lines(1)
-            break
-        elif player_number.isdigit() and int(player_number) in possible_player_numbers:
-            #print("living players: "+str(game["living_players"]))
-            bot_response = ask_bot("p"+player_number+" says: "+conversation_input.split(None, 1)[1])
-            make_bot_response(bot_response)
-            input("Press Enter to continue...")
-            clear_console_lines(3)
-        else:
-            clear_console_lines(1)
+            player_number = conversation_input.split()[0] if len(conversation_input.split()) > 1 else ""
+            # print("player number: "+player_number)
+            # print("living players: "+str(possible_player_numbers))
+            if conversation_input == "":
+                clear_console_lines(1)
+                break
+            elif player_number.isdigit() and int(player_number) in possible_player_numbers:
+                #print("living players: "+str(game["living_players"]))
+                bot_response = ask_bot("p"+player_number+" says: "+conversation_input.split(None, 1)[1])
+                make_bot_response(bot_response)
+                input("Press Enter to continue...")
+                clear_console_lines(3)
+            else:
+                clear_console_lines(1)
 
-
-def random_event():
-    global input_thread
-    global random_bot_comment
-    while True:
-        if random.random() < 0.5:  # Adjust 0.1 to control the probability of the event
-            # Trigger the event here
-            #print("Random event triggered!")
-            input_thread.join()
-            random_bot_comment = True
-        time.sleep(1)  # Wait for 10 seconds before checking again
-
-import threading
-
-
-
-
-# Define a function to get user input
-def get_user_input(text):
-    global user_input
-    player_input = input("GAME MODE(enter to switch): "+text)
-    return player_input
-    #user_input = input("Please enter your input: ")
-
-
-# # Start a new thread to get user input
-
-
-
-# # Wait for 5 seconds for the input thread to complete
-
-
-# # If the input thread is still running, it means the time limit has been exceeded
-# if input_thread.is_alive():
-#     print("Time limit exceeded. No input received.")
-#     exit()
-
-# # If the input thread has completed, print the user input
-# print("Your input was:", user_input)
 
 def check_if_bot_want_to_talk(game):
     bot_wants_to_talk = False
@@ -355,13 +318,6 @@ def check_if_bot_want_to_talk(game):
 
 
 def handle_user_response(text, game):
-    # global random_bot_comment
-    # global input_thread
-    # global event_thread
-    #debug_log('game8'+game)
-    #lines_to_clear = 0
-    
-    #random_bot_comment = False
     if "Enter the number of players:" in text:
         allowed_answers = ["5","6","7","8","9","10"]
     elif "Enter the starting player: " in text:
@@ -391,35 +347,19 @@ def handle_user_response(text, game):
         allowed_answers = ["n", "l"]
     else:
         "unkown question"
-    #debug_log('game6 '+game)
-
-    bot_wants_to_talk = check_if_bot_want_to_talk(game)
-    #TODO NEEDS DEBUGGED, WHY IS BOT NOT TALKING?
-        
-
+    bot_wants_to_talk = False
+    if "vote?" not in text:
+        bot_wants_to_talk = check_if_bot_want_to_talk(game)
     while True:
-        #debug_log('game7 '+game)
-
-        #player_input = ""
-
-        # if "player_roles" in game:
-        #     input_thread = threading.Thread(target=get_user_input, args=(text,))
-        #     input_thread.start()
-        #     event_thread = threading.Thread(target=random_event)
-        #     event_thread.start()
-
-        # #player_input = get_user_input("GAME MODE(enter to switch): "+text)
-        # else:
         player_input = ""
         if not bot_wants_to_talk:
             player_input = input("GAME MODE(enter to switch): "+text)
         if bot_wants_to_talk:
-            clear_console_lines(1)
+            bot_wants_to_talk = False
             conversation_mode(game, "bot")   
         elif player_input == '':
             clear_console_lines(1)
-            conversation_mode(game, "human")
-                         
+            conversation_mode(game, "human")                         
         elif player_input.lower() in allowed_answers:
             break
         else:
@@ -503,16 +443,6 @@ def handle_bot_nomination(game):
     make_bot_response("I nominate player "+bot_nomination_for_chancellor+" as chancellor.")
     return bot_nomination_for_chancellor
 
-# def start_random_bot_comment_thread():
-#     event_thread = threading.Thread(target=random_event)
-#     event_thread.start()
-
-#     # Your main program code here
-#     # ...
-
-#     # Wait for the event thread to finish before exiting the program
-#     event_thread.join()
-
 def main():
     clear_console_lines(2)
     game = game_state_dict.AutoSaveDict(cwd+'/backups/game_state_backup.json', debugging)
@@ -522,10 +452,6 @@ def main():
     else:
         game.load_from_file()
         bot_game_sum.load_from_file()
-    #show_game_state(game)
-    #start_random_bot_comment_thread()
-
-
     while (game["game_is_going"]):
         if game["failed_elections"] == 3:
             game = enact_top_policy(game)
