@@ -276,17 +276,20 @@ def tell_bot_fellow_fascists(player_roles, num_players):
 #         debug_log(key, ":", value)
 
 def conversation_mode(game, initiation):
-    clear_console_lines(1)
-    if initiation == "bot":
-        bot_comment = ask_bot("What would you like to say?")
-        make_bot_response(bot_comment)
+    #clear_console_lines(1)
+
     possible_player_numbers = [2,3,4,5,6,7,8,9,10]
     if "living_players" in game:
         possible_player_numbers = list(game["living_players"])
         possible_player_numbers.remove(1)
     while True:        
         #debug_log('game7 '+game)
-        conversation_input = input("CONVERSATION MODE(enter to switch): Enter your player number, followed by your comment: ")
+        if initiation == "bot":
+            bot_comment = ask_bot("What would you like to say?")
+            make_bot_response(bot_comment)
+            initiation = "human"
+        else:
+            conversation_input = input("CONVERSATION MODE(enter to switch): Enter your player number, followed by your comment: ")
         player_number = conversation_input.split()[0] if len(conversation_input.split()) > 1 else ""
         # print("player number: "+player_number)
         # print("living players: "+str(possible_player_numbers))
@@ -309,7 +312,7 @@ def random_event():
     while True:
         if random.random() < 0.5:  # Adjust 0.1 to control the probability of the event
             # Trigger the event here
-            print("Random event triggered!")
+            #print("Random event triggered!")
             input_thread.join()
             random_bot_comment = True
         time.sleep(1)  # Wait for 10 seconds before checking again
@@ -342,15 +345,23 @@ def get_user_input(text):
 # # If the input thread has completed, print the user input
 # print("Your input was:", user_input)
 
+def check_if_bot_want_to_talk(game):
+    bot_wants_to_talk = False
+    if "player_roles" in game:
+        bot_wants_to_talk_response = ask_bot("Is there anything you would like to say or ask? answer with a single word, Yes or No.")
+        if bot_wants_to_talk_response.lower().startswith(('y', 'j')) or 'yes' in bot_wants_to_talk_response.lower():    
+            bot_wants_to_talk = True
+    return bot_wants_to_talk
 
 
 def handle_user_response(text, game):
-    global random_bot_comment
-    global input_thread
+    # global random_bot_comment
+    # global input_thread
+    # global event_thread
     #debug_log('game8'+game)
     #lines_to_clear = 0
     
-    random_bot_comment = False
+    #random_bot_comment = False
     if "Enter the number of players:" in text:
         allowed_answers = ["5","6","7","8","9","10"]
     elif "Enter the starting player: " in text:
@@ -381,22 +392,34 @@ def handle_user_response(text, game):
     else:
         "unkown question"
     #debug_log('game6 '+game)
+
+    bot_wants_to_talk = check_if_bot_want_to_talk(game)
+    #TODO NEEDS DEBUGGED, WHY IS BOT NOT TALKING?
+        
+
     while True:
         #debug_log('game7 '+game)
-        #input_thread = threading.Thread(target=get_user_input, args=(text,))
-        #input_thread.start()
 
-        #player_input = get_user_input("GAME MODE(enter to switch): "+text)
+        #player_input = ""
 
-        player_input = input("GAME MODE(enter to switch): "+text)
-        if player_input == '':
+        # if "player_roles" in game:
+        #     input_thread = threading.Thread(target=get_user_input, args=(text,))
+        #     input_thread.start()
+        #     event_thread = threading.Thread(target=random_event)
+        #     event_thread.start()
+
+        # #player_input = get_user_input("GAME MODE(enter to switch): "+text)
+        # else:
+        player_input = ""
+        if not bot_wants_to_talk:
+            player_input = input("GAME MODE(enter to switch): "+text)
+        if bot_wants_to_talk:
+            clear_console_lines(1)
+            conversation_mode(game, "bot")   
+        elif player_input == '':
             clear_console_lines(1)
             conversation_mode(game, "human")
-        if random_bot_comment:
-            bot_wants_to_talk_response = ask_bot("Is there anything you would like to say or ask? answer with a single word, Yes or No.")
-            if bot_wants_to_talk_response.lower().startswith(('y', 'j')) or 'yes' in bot_wants_to_talk_response.lower():          
-        
-                conversation_mode(game, "bot")                            
+                         
         elif player_input.lower() in allowed_answers:
             break
         else:
@@ -502,8 +525,7 @@ def main():
     #show_game_state(game)
     #start_random_bot_comment_thread()
 
-    # event_thread = threading.Thread(target=random_event)
-    # event_thread.start()
+
     while (game["game_is_going"]):
         if game["failed_elections"] == 3:
             game = enact_top_policy(game)
