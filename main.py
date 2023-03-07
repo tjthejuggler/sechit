@@ -139,6 +139,37 @@ def get_first_numeric_digit(string):
             return char
     return "No digit found"
 
+def handle_bot_investigation(game):
+    bot_investigation = ""
+    while True:
+        human_ready = handle_user_response("Are you ready to ask who the bot will nominate? (Y)es ", game)
+        if human_ready == "y":
+            bot_investigation = ask_bot("As president, you get to learn the party of another player. Which player would you like to investigate? Answer only with their number.")
+            bot_investigation = get_first_numeric_digit(bot_investigation)
+            if bot_investigation == "No digit found":
+                bot_investigation = handle_user_response("Enter the number of the player that the bot will investigate.", game)
+            make_bot_response("I will investigate player "+bot_investigation)
+            investigated_players_input = input("Player"+bot_investigation+", press (F)ascist or (L)iberal, then press enter.")
+            if investigated_players_input.beginswith("F") or investigated_players_input.beginswith("f"):
+                bot_game_sum.append_to_last_user("p"+ bot_investigation+" is a Fascist")
+            else:
+                bot_game_sum.append_to_last_user("p"+ bot_investigation+" is a Liberal")
+            break
+
+def handle_bot_execution(game):
+    bot_execution = ""
+    while True:
+        human_ready = handle_user_response("Are you ready to ask who the bot will execute? (Y)es ", game)
+        if human_ready == "y":
+            bot_execution = ask_bot("As president, you get to execute one player at the table. Which player would you like to execute? Answer only with their number.")
+            bot_execution = get_first_numeric_digit(bot_execution)
+            if bot_execution == "No digit found":
+                bot_execution = input("Enter the number of the player that the bot will execute.")
+            make_bot_response("I formally execute Player "+bot_execution)
+            game["living_players"].remove(int(bot_execution))
+            break
+    return game
+
 def check_for_special_power(game):
     debug_log("CHECK SPECIAL POWERS")
     #POLICY PEEK
@@ -151,16 +182,7 @@ def check_for_special_power(game):
     #INVESTIGATION
     elif (game["num_players"] in [7,8] and game["fascist_policies"] == 2) or (game["num_players"] in [9,10] and game["fascist_policies"] in [1,2]):
         if game["current_president"] == 1:
-            bot_investigation = ask_bot("As president, you get to learn the party of another player. Which player would you like to investigate? Answer only with their number.")
-            bot_investigation = get_first_numeric_digit(bot_investigation)
-            if bot_investigation == "No digit found":
-                bot_investigation = handle_user_response("Enter the number of the player that the bot will investigate.", game)
-            make_bot_response("I will investigate player "+bot_investigation)
-            investigated_players_input = input("Player"+bot_investigation+", press (F)ascist or (L)iberal, then press enter.")
-            if investigated_players_input.beginswith("F") or investigated_players_input.beginswith("f"):
-                bot_game_sum.append_to_last_user("p"+ bot_investigation+" is a Fascist")
-            else:
-                bot_game_sum.append_to_last_user("p"+ bot_investigation+" is a Liberal")
+            handle_bot_investigation(game)
         else:
             human_player_investigation = input("Which player did player "+str(game["current_president"])+" investigate? Answer only with their number.")
             if human_player_investigation == "1":
@@ -176,12 +198,7 @@ def check_for_special_power(game):
     elif (game["fascist_policies"] in [4,5]):
         print('in execution')
         if game["current_president"] == 1:
-            bot_execution = ask_bot("As president, you get to execute one player at the table. Which player would you like to execute? Answer only with their number.")
-            bot_execution = get_first_numeric_digit(bot_execution)
-            if bot_execution == "No digit found":
-                bot_execution = input("Enter the number of the player that the bot will execute.")
-            make_bot_response("I formally execute Player "+bot_execution)
-            game["living_players"].remove(int(bot_execution))
+            game = handle_bot_execution(game)
         else:
             human_player_execution = input("Which player did player "+str(game["current_president"])+" execute? Answer only with their number.")
             game["living_players"].remove(int(human_player_execution))
@@ -429,6 +446,9 @@ def handle_bot_nomination(game):
             break
     make_bot_response("I nominate player "+bot_nomination_for_chancellor+" as chancellor.")
     return bot_nomination_for_chancellor
+
+
+
 
 def save_game_history(game):
     now = datetime.now()

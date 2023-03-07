@@ -1,28 +1,28 @@
 
-TODO
 
-clean up TODO
 move some stuff from main into other files to clean up code
 
+GAME BOT MAKES SUMMARIES FOR CONVERSATION BOT       
+    the game version of the bot makes summaries of the game and the talking bot sees those summaries,
+        and vice versa, the talking bot makes summaries of the conversations for their later selves, as well as for the game bot.
+
+HUMAN TALK
+    there can be player question limits so that each person gets a certain number of interactions
+
+BOT PERSONNESS:        
+    bot could randomly choose its name and a short bio, and introduce itself
+
+    a seperate instance can be used to turn player numbers into appropriate phrasing
+        this can be used to make the bot more human like and have it seem more like whatever character it is
+
+    is there a way that the bot could have a face with a mouth that moves to the words? 
+        the face could be randomly generated
 
 
-MIC COMMUNICATION
-    if someone mentions the name of the bot, then the bot will respond to that person
-        
-        
-        the game version of the bot makes summaries of the game and the talking bot sees those summaries,
-            and vice versa, the talking bot makes summaries of the conversations for their later selves, as well as for the game bot.
-
-there can be player question limits so that each person gets a certain number of interactions
-            
-bot could randomly choose its name and a short bio, and introduce itself
 
 bot should tell user to show cards?
 
 
-
-is there a way that the bot could have a face with a mouth that moves to the words?
-    the face could be randomly generated
 
 
 
@@ -30,79 +30,29 @@ figure out a way to make a testbench for this
 
 
 
+NEEDS TESTED:
+    all powers
+    game history creation
 
 HISTORY SAVING:
-
-
-When a game ends, save the game history to a file
-    the file should be named with the date and time
-
-keep a running token size for the game summary
-
-keep track of token sent/received count for entire game
+    keep a running token size for the game summary
+    keep track of token sent/received count for entire game
 
 BOT TALK:
     everything that goes through make_bot_response() could be ran through a seperate instance of gpt with the information about the bot to make it more realistic
 
-When the bot says something
-    have the option to talk to the bot before moving on
+RANDOM BOT COMMENT:
+    when we have been at a cetrain point in the game for awhile, there can be a randomizer that sometimes asks the bot if they want to say something out loud, and tell them how long we have been at this stage. It can tell them to answer yes or no, if they answer yes then it will ask them what they want to say.
 
-when we have been at a cetrain point in the game for awhile, there can be a randomizer that sometimes asks the bot if they want to say something out loud, and tell them how long we have been at this stage. It can tell them to answer yes or no, if they answer yes then it will ask them what they want to say.
-
-when the bot says something that gets printed, it should also be said out loud
-
-stuff that could done by using another instance of gpt should be to save the size of the summary
-
-every time an a game event happens, bot could be asked if it has something it would like to say
-
-instead of immediately asking the bot for an official response, it could first be asked who it is thinking about investigating/executing to allow players to try to pursuade the bot to change its mind.
-    this could also be on a randomizer, so sometimes it listens to people pursuading it.
-        instead of a randomizer it could be asked if it wants to make a decision or listen to people pursuading it
-
-whenever it has a choice to make, it could be asked if it has anything it would like to say or ask anyone or everyone.
-
-it can be fed a constant feed of what everyone is saying, even if it is too long, it just needs to be told the game state before it makes decisions. In the information it gets, it can be given description of what has been talked about.
-
-TALK TO BOT:
-what if we transcribe everything, pick out the words that are most common and feed those to the bot, what if we transcribe everything, pick out the words that are most common and feed those to the bot, 
+BOT DECISIONS
+    instead of immediately asking the bot for an official response, it could first be asked who it is thinking about investigating/executing to allow players to try to pursuade the bot to change its mind.
+        this could also be on a randomizer, so sometimes it listens to people pursuading it.
+            instead of a randomizer it could be asked if it wants to make a decision or listen to people pursuading it
 
 
 
 
 
-Nothing should happen automatically, both sides should be given a chance to speak before an action happens
-
-it responds to its name, which gets detected without him knowing, and causes an event to happen, he gets notified of the event and can respond to it
-    also "everyone" should be a name that has a chance of being triggered by.
-        this can be done by privately asking hiim if he has anything he would like to stay
-
-there can be a timer setup, after the bot has said something, if anything is said soon enough after then it will go to the bot to respond to again,
-    but after enough time has gone by
-
-
-BOT STRATEGY:
-bot should be told that if they are liberal then they should never lie, and if they are facist then they should be deceptive
-
-THOUGHTS:
-
-maybe keep track of all stats and the phrasing used to interact with the bot, and then use tht to improve the bot
-
-instead of giving bot vote results with Y / N , maybe give it results with Yes / No
-
-a seperate instance can be used to turn player numbers into appropriate phrasing
-    this can be used to make the bot more human like and have it seem more like whatever character it is
-
-
-
-
-is it possible to text the bot using a telegram bot?
-    a wireless microphone that can be passed around to talk to the bot may be better. Ideally there would be a way to tell the bot who is talking to it. The data inputter could just always tell it before someone talks, or it could be on the player to introduce themself.
-        For this we need a good voice to text api.
-
-a text to voice api could be used to make the bot talk to the players
-
-make a new file that holds the initial prompt, load that into the main loop
-maybe make something special if the bot is player 1
 
 
 POTENTIAL TEXT TO SPEECH
@@ -117,3 +67,17 @@ try keyboard_test.py once I have multiple keyboards
 TKINTER
     I can have multiple simultaneous input, maybe buttons for game and text box for conversation
     the bot can talk without interrupting anything
+
+MIC COMMUNICATION
+    if someone mentions the name of the bot, then the bot will respond to that person
+    
+    what if we transcribe everything, pick out the words that are most common and feed those to the bot, what if we transcribe everything, pick out the words that are most common and feed those to the bot, 
+    
+    it responds to its name, which gets detected without him knowing, and causes an event to happen, he gets notified of the event and can respond to it
+    also "everyone" should be a name that has a chance of being triggered by.
+        this can be done by privately asking hiim if he has anything he would like to stay
+
+    it can be fed a constant feed of what everyone is saying, even if it is too long, it just needs to be told the game state before it makes decisions. In the information it gets, it can be given description of what has been talked about.
+    
+    there can be a timer setup, after the bot has said something, if anything is said soon enough after then it will go to the bot to respond to again,
+    but after enough time has gone by
