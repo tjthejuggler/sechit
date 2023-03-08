@@ -12,11 +12,14 @@ import os
 import threading
 import time
 from datetime import datetime
+from bot_conversation_box import BotTalkBox
+import tkinter as tk
 
 debugging = False
 
 cwd = os.getcwd()
 bot_game_sum = BotGameSummary(debugging)
+game = game_state_dict.AutoSaveDict(cwd+'/backups/game_state_backup.json', debugging)
 random_bot_comment = False
 
 def debug_log(text):
@@ -309,13 +312,11 @@ def tell_bot_fellow_fascists(player_roles, num_players):
             known_fascists.append(fascist_index[2])
     return(known_fascists)   
 
-def check_if_bot_want_to_talk(game):
-    bot_wants_to_talk = False
-    if "player_roles" in game:
-        bot_wants_to_talk_response = ask_bot("Is there anything you would like to say or ask? answer with a single word, Yes or No.")
-        if bot_wants_to_talk_response.lower().startswith(('y', 'j')) or 'yes' in bot_wants_to_talk_response.lower():    
-            bot_wants_to_talk = True
-    return bot_wants_to_talk
+# def check_if_bot_wants_to_talk(game):
+#     if "player_roles" in game:
+#         bot_wants_to_talk_response = ask_bot("Is there anything you would like to say or ask? answer with a single word, Yes or No.")
+#         if bot_wants_to_talk_response.lower().startswith(('y', 'j')) or 'yes' in bot_wants_to_talk_response.lower():    
+#             bot_conversation_box.bot_interrupts("Hello from main!")
 
 def conversation_mode(game, initiation):
     possible_player_numbers = [2,3,4,5,6,7,8,9,10]
@@ -374,20 +375,23 @@ def handle_user_response(text, game):
         allowed_answers = ["n", "l"]
     else:
         "unkown question"
-    bot_wants_to_talk = False
-    if "vote?" not in text:
-        bot_wants_to_talk = check_if_bot_want_to_talk(game)
+    # bot_wants_to_talk = False
+    # if "vote?" not in text:
+    #     check_if_bot_wants_to_talk(game)
+    if bot_conversation_box and "(J)a / (N)ein" not in text:
+        #print("talking here", text)
+        bot_conversation_box.check_if_bot_wants_to_talk()
     while True:
         player_input = ""
-        if not bot_wants_to_talk:
-            player_input = input("GAME MODE(enter to switch): "+text)
-        if bot_wants_to_talk:
-            bot_wants_to_talk = False
-            conversation_mode(game, "bot")   
-        elif player_input == '':
-            clear_console_lines(1)
-            conversation_mode(game, "human")                         
-        elif player_input.lower() in allowed_answers:
+        #if not bot_wants_to_talk:
+        player_input = input("GAME MODE(enter to switch): "+text)
+        # if bot_wants_to_talk:
+        #     bot_wants_to_talk = False
+        #     conversation_mode(game, "bot")   
+        # if player_input == '':
+        #     clear_console_lines(1)
+        #     conversation_mode(game, "human")                         
+        if player_input.lower() in allowed_answers:
             break
         else:
             clear_console_lines(1)
@@ -395,7 +399,8 @@ def handle_user_response(text, game):
     return player_input
 
 def make_bot_response(text):
-    print('Bot: '+text)
+    #print('Bot: '+text)
+    bot_conversation_box.bot_talks(text)
     bot_response_thread = threading.Thread(target=bot_response, args=(text,))
     bot_response_thread.start()
 
@@ -483,9 +488,13 @@ def save_game_history(game):
         output_file.write(json.dumps(file2_contents))
         output_file.write(file3_contents)
 
+
+
+
 def main():
+    global game
     clear_console_lines(2)
-    game = game_state_dict.AutoSaveDict(cwd+'/backups/game_state_backup.json', debugging)
+    
     print("\n")
     if handle_user_response("Would you like to start a (N)ew game or (L)oad the previous one? ", {}) == "n":
         game = start_new_game(game)
@@ -493,6 +502,13 @@ def main():
         game.load_from_file()
         bot_game_sum.load_from_file()
     while (game["game_is_going"]):
+        global bot_conversation_box
+
+        # wait for a bit
+        time.sleep(2)
+
+        # set the label text
+        
         if game["failed_elections"] == 3:
             game = enact_top_policy(game)
         if game["current_president"] == 1:
@@ -610,7 +626,28 @@ def main():
                     #     game["liberal_policies"] += 1
                     # game["game_is_going"] = check_for_policy_game_completion(game["fascist_policies"], game["current_president"])
 
-main()
+bot_conversation_box = None
+
+
+def create_tkinter_window():
+    global bot_conversation_box
+    root = tk.Tk()
+    root.protocol("WM_DELETE_WINDOW", lambda: None)
+    root.wm_attributes("-topmost", 1)
+    bot_conversation_box = BotTalkBox(root, bot_game_sum, game, ask_bot, make_bot_response)
+    root.mainloop()
+
+if __name__ == '__main__':
+    # Create a new thread for the tkinter main loop
+    t = threading.Thread(target=create_tkinter_window)
+    t.start()
+
+    # Call your main function in the main thread
+    main()
+
+
+
+
 
 # create an instance of the TextVariable class
 # bot_game_sum.append(["system","you are a five year old boy who loves insects a fascisticulous amount"])

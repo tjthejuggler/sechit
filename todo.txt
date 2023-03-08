@@ -1,7 +1,6 @@
 
 TKINTER
-    I can have multiple simultaneous inputs, maybe buttons for game and text box for conversation
-    the bot can talk without interrupting anything
+    make it so the user can submit a message in tkinter box
     good hookup with art ai
 
 move some stuff from main into other files to clean up code
