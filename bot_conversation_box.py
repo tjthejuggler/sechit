@@ -81,20 +81,20 @@ class BotTalkBox:
 
     def randomly_offer_to_let_bot_talk(self):
         self.check_if_bot_wants_to_talk()
-        self.master.after(random.randint(1000, 5000), self.randomly_offer_to_let_bot_talk)
+        self.master.after(random.randint(10000, 50000), self.randomly_offer_to_let_bot_talk)
 
     def check_if_bot_wants_to_talk(self):
-        if "player_roles" in self.game:
+        if "player_roles" in self.game and True == False:
             bot_wants_to_talk_response = self.ask_bot("Is there anything you would like to say or ask? answer with a single word, Yes or No.")
             if bot_wants_to_talk_response.lower().startswith(('y', 'j')) or 'yes' in bot_wants_to_talk_response.lower():  
                 bot_comment = self.ask_bot("What would you like to say?")
                 self.make_bot_response(bot_comment)
                 #print(bot_wants_to_talk_response)  
-                self.bot_talks(bot_wants_to_talk_response)
+                self.bot_talks(bot_comment)
         # set the label text to the given text
 
     def bot_talks(self, text):
-        self.label.config(text=text)
+        self.label.config(text="Bot: "+text)
 
 if __name__ == '__main__':
     root = tk.Tk()

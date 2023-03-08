@@ -84,7 +84,8 @@ def show(num_cards, debugging):
     cap.release()
     cv2.destroyAllWindows()
 
-    print(read_cards)
+    if debugging:
+        print(read_cards)
 
 
 

@@ -1,3 +1,14 @@
+bot won, player three was hitler, but game didnt end
+
+maybe make the player votes stay visible until they are all input
+
+
+turn off the random interrupter for now, even maybe turn off all questions, or make it less likely that it happens
+
+
+there sees to be some sort of recursion happening in the bot summary, system is list multiple times maybe, or maybe it is just multiple bot_president_policy_selection
+
+
 
 Right now the bot is asked if there is something they want to say every time the user is asked something
     it could be random when it gets asked at that point
@@ -10,6 +21,22 @@ GAME BOT MAKES SUMMARIES FOR CONVERSATION BOT
         and vice versa, the talking bot makes summaries of the conversations for their later selves, as well as for the game bot.
     
     how often should summaries be made?
+
+DUAL MINDS (THIS MAY BE A WAY TO DEAL WITH THE PROBLEM OF PROMPT SIZZES GETTING TOO BIG)
+    Maybe: this mode kicks in when the bots tokens excede a certain amount
+
+    the bot could have a dual mind, one that is the game bot, and one that is the talking bot
+        whenever the talking bot talks, it should have an up to date summary of the game state
+
+        when the bot plays, it should have a summary of the conversation history
+
+    when the next move happens in the game, summarize the conversation
+
+    the conversation bot should have a summary of the game state before it responds to the player
+
+    when the game bot is called, it should make do decision until it has received a summary of the previous conversation.
+
+
 
 HUMAN TALK
     there can be player question limits so that each person gets a certain number of interactions
@@ -31,7 +58,7 @@ figure out a way to make a testbench for this
 
 NEEDS TESTED:
     all powers
-    game history creation
+    game history creation at end of game
 
 HISTORY SAVING:
     keep a running token size for the game summary
@@ -41,7 +68,9 @@ BOT TALK:
     everything that goes through make_bot_response() could be ran through a seperate instance of gpt with the information about the bot to make it more realistic
 
 RANDOM BOT COMMENT:
-    when we have been at a cetrain point in the game for awhile, there can be a randomizer that sometimes asks the bot if they want to say something out loud, and tell them how long we have been at this stage. It can tell them to answer yes or no, if they answer yes then it will ask them what they want to say.
+    there can be a game variable that is bot_can_make_random_comment
+        set to false if it already randomly commented
+        set to false if someone else initiated conversation
 
 BOT DECISIONS
     instead of immediately asking the bot for an official response, it could first be asked who it is thinking about investigating/executing to allow players to try to pursuade the bot to change its mind.
