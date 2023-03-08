@@ -1,13 +1,15 @@
 
-TKINTER
-    make it so the user can submit a message in tkinter box
-    good hookup with art ai
+Right now the bot is asked if there is something they want to say every time the user is asked something
+    it could be random when it gets asked at that point
+    it could only ask in certain situations
 
 move some stuff from main into other files to clean up code
 
 GAME BOT MAKES SUMMARIES FOR CONVERSATION BOT       
     the game version of the bot makes summaries of the game and the talking bot sees those summaries,
         and vice versa, the talking bot makes summaries of the conversations for their later selves, as well as for the game bot.
+    
+    how often should summaries be made?
 
 HUMAN TALK
     there can be player question limits so that each person gets a certain number of interactions
@@ -21,7 +23,7 @@ BOT PERSONNESS:
     is there a way that the bot could have a face with a mouth that moves to the words? 
         the face could be randomly generated
 
-we can use stable diffusion and various amounts of mouth openness somehow programatically
+    we can use stable diffusion and various amounts of mouth openness somehow programatically
 
 bot should tell user to show cards?
 
