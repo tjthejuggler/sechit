@@ -99,7 +99,7 @@ def input_vote_results(bot_vote, game):
                 else:
                     players_vote = "N"
             else:
-                players_vote = handle_user_response(f"Player {voting_player}: (J)a / (N)ein? ", game, "yes_or_no")
+                players_vote = handle_user_response(f"Player {voting_player}: (J)a / (N)ein? ", game, "yes_or_no_vote")
                 if players_vote.lower() in ('j', 'y'):
                     players_vote = "Y"
                 else:
@@ -345,7 +345,7 @@ def handle_user_response(text, game, question_type):
         allowed_answers = list(game["living_players"])
         allowed_answers.remove(game["current_president"])
         allowed_answers = [str(num) for num in allowed_answers]
-    elif question_type == "yes_or_no":
+    elif question_type in ["yes_or_no", "yes_or_no_vote"]:
         allowed_answers = ["y", "j", "n"]
     elif question_type == "new_load":
         allowed_answers = ["n", "l"]
@@ -362,7 +362,13 @@ def handle_user_response(text, game, question_type):
             break
         else:
             clear_console_lines(1)
-    clear_console_lines(1)
+    
+    if question_type == "yes_or_no_vote":
+        if str(game["living_players"][-1]) in text:
+            clear_console_lines(len(game["living_players"]))
+    else:
+        
+        clear_console_lines(1)
     return player_input
 
 

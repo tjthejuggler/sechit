@@ -1,10 +1,8 @@
 bot won, player three was hitler, but game didnt end
 
-maybe make the player votes stay visible until they are all input
 
-make cv window get focus when made
+maybe a label on the conversation box that shows the last event to have happened
 
-there sees to be some sort of recursion happening in the bot summary, system is list multiple times maybe, or maybe it is just multiple bot_president_policy_selection
 
 make randomizer to limit random bot interjections on events
 

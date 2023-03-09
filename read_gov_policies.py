@@ -75,6 +75,11 @@ def show(num_cards, debugging):
                 # Create a black window with a size of 500x500 pixels
                 black_image = np.zeros((500, 500, 3), np.uint8)
                 # Show the black window
+                cv2.namedWindow('Black Window')
+
+                # Set the window focus
+                cv2.setWindowProperty('Black Window', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
                 cv2.imshow('Black Window', black_image)
 
                 
