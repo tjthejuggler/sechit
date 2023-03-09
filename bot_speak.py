@@ -8,7 +8,7 @@ import os
 
 def say(text):
     cwd = os.getcwd()
-    filename = text[:245].title().replace(" ","")
+    filename = text[:245].title().replace(" ","").replace(",","").replace(".","").replace("?","").replace("!","").replace(":","").replace(";","").replace("'","").replace('"',"").replace("(","").replace(")","").replace("[","").replace("]","").replace("{","").replace("}","").replace("/","").replace("\\","").replace("|","").replace("@","").replace("#","").replace("$","").replace("%","").replace("^","").replace("&","").replace("*","").replace("-","").replace("_","").replace("=","").replace("+","").replace("`","").replace("~","").replace("<","").replace(">","")
     if not os.path.exists(cwd+"/bot_audio/"+filename+".mp3"):     
         #print("Creating audio file")  
         language = 'en'
@@ -19,5 +19,3 @@ def say(text):
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy() == True:
         continue
-
-#say(text)

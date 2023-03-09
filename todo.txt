@@ -2,12 +2,11 @@ bot won, player three was hitler, but game didnt end
 
 maybe make the player votes stay visible until they are all input
 
-
-turn off the random interrupter for now, even maybe turn off all questions, or make it less likely that it happens
-
+make cv window get focus when made
 
 there sees to be some sort of recursion happening in the bot summary, system is list multiple times maybe, or maybe it is just multiple bot_president_policy_selection
 
+make randomizer to limit random bot interjections on events
 
 
 Right now the bot is asked if there is something they want to say every time the user is asked something
@@ -106,3 +105,8 @@ MIC COMMUNICATION
     
     there can be a timer setup, after the bot has said something, if anything is said soon enough after then it will go to the bot to respond to again,
     but after enough time has gone by
+
+
+
+CREEPY_DOLL_FACE.JPG PROMPT
+perfectly centered realistic face, evenly spaced in the center of the image, close-up of the face of a highly detailed futuristic childrens toy, it is some sort of expensive alien retro, adorable + malicious + lovely
