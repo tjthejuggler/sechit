@@ -80,6 +80,9 @@ def show(num_cards, debugging):
                 # Set the window focus
                 cv2.setWindowProperty('Black Window', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
+                #add text that tells how many cards have been seen
+                cv2.putText(black_image, "Cards seen: " + str(len(read_cards)) +"/"+str(num_cards), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
                 cv2.imshow('Black Window', black_image)
 
                 

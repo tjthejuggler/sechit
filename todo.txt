@@ -1,37 +1,37 @@
 bot won, player three was hitler, but game didnt end
 
+this might be useful in putting the conversation box lower
+import tkinter as tk
+
+root = tk.Tk()
+
+# set the width and height of the window
+width = 400
+height = 300
+
+# calculate the x and y positions of the window
+x_pos = (root.winfo_screenwidth() // 2) - (width // 2)
+y_pos = (root.winfo_screenheight() // 2) - (height // 2)
+
+# set the geometry of the window to the specified values
+root.geometry(f"{width}x{height}+{x_pos}+{y_pos}")
+
+root.mainloop()
+
+
+-------------------------
+
 
 maybe a label on the conversation box that shows the last event to have happened
+
+
+check out tkinter_graph.py, it can be included in the conversation window
 
 
 make randomizer to limit random bot interjections on events
 
 
-Right now the bot is asked if there is something they want to say every time the user is asked something
-    it could be random when it gets asked at that point
-    it could only ask in certain situations
-
 move some stuff from main into other files to clean up code
-
-GAME BOT MAKES SUMMARIES FOR CONVERSATION BOT       
-    the game version of the bot makes summaries of the game and the talking bot sees those summaries,
-        and vice versa, the talking bot makes summaries of the conversations for their later selves, as well as for the game bot.
-    
-    how often should summaries be made?
-
-DUAL MINDS (THIS MAY BE A WAY TO DEAL WITH THE PROBLEM OF PROMPT SIZZES GETTING TOO BIG)
-    Maybe: this mode kicks in when the bots tokens excede a certain amount
-
-    the bot could have a dual mind, one that is the game bot, and one that is the talking bot
-        whenever the talking bot talks, it should have an up to date summary of the game state
-
-        when the bot plays, it should have a summary of the conversation history
-
-    when the next move happens in the game, summarize the conversation
-
-    the conversation bot should have a summary of the game state before it responds to the player
-
-    when the game bot is called, it should make do decision until it has received a summary of the previous conversation.
 
 
 
@@ -108,3 +108,25 @@ MIC COMMUNICATION
 
 CREEPY_DOLL_FACE.JPG PROMPT
 perfectly centered realistic face, evenly spaced in the center of the image, close-up of the face of a highly detailed futuristic childrens toy, it is some sort of expensive alien retro, adorable + malicious + lovely
+
+
+GAME BOT MAKES SUMMARIES FOR CONVERSATION BOT       
+    the game version of the bot makes summaries of the game and the talking bot sees those summaries,
+        and vice versa, the talking bot makes summaries of the conversations for their later selves, as well as for the game bot.
+    
+    how often should summaries be made?
+
+DUAL MINDS (THIS MAY BE A WAY TO DEAL WITH THE PROBLEM OF PROMPT SIZZES GETTING TOO BIG)
+    Maybe: this mode kicks in when the bots tokens excede a certain amount
+
+    the bot could have a dual mind, one that is the game bot, and one that is the talking bot
+        whenever the talking bot talks, it should have an up to date summary of the game state
+
+        when the bot plays, it should have a summary of the conversation history
+
+    when the next move happens in the game, summarize the conversation
+
+    the conversation bot should have a summary of the game state before it responds to the player
+
+    when the game bot is called, it should make do decision until it has received a summary of the previous conversation.
+

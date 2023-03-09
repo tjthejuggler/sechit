@@ -93,8 +93,9 @@ class BotTalkBox:
                 self.bot_talks(bot_comment)
         # set the label text to the given text
 
-    def bot_talks(self, text):
+    def bot_talks(self, text, duration):
         self.label.config(text="Bot: "+text)
+        #graph_move(duration)
 
 if __name__ == '__main__':
     root = tk.Tk()
