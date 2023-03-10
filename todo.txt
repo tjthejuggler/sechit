@@ -21,6 +21,11 @@ root.mainloop()
 
 -------------------------
 
+right now we have a voting problem for multiple bots, we need to get votes from every bot involved in the election
+    the bot_vote function is passing the current president and then using that number as the bots number, this is resulting in bogus bot_summaries being made
+
+
+add duration back to bot_talks and make that graphic
 
 major testing needed for multiple bots
 

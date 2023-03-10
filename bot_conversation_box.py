@@ -33,8 +33,9 @@ import tkinter as tk
 import random
 
 class BotTalkBox:
-    def __init__(self, master, bot_game_sum, game, ask_bot, make_bot_response):
+    def __init__(self, master, index, bot_game_sum, game, ask_bot, make_bot_response):
         self.master = master
+        self.index = index
         self.bot_game_sum = bot_game_sum
         self.game = game
         self.label = None
@@ -93,8 +94,8 @@ class BotTalkBox:
                 self.bot_talks(bot_comment)
         # set the label text to the given text
 
-    def bot_talks(self, text, duration):
-        self.label.config(text="Bot: "+text)
+    def bot_talks(self, text):#, duration):
+        self.label.config(text="Bot"+str(self.index)+": "+text)
         #graph_move(duration)
 
 if __name__ == '__main__':
