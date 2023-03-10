@@ -55,7 +55,7 @@ def show_secret(text_to_show):
         input("Press any key to hide this information!!".upper())
         clear_console_lines(5)    
 
-def distribute_roles(num_players):
+def distribute_roles(num_bot_players, num_players):
     seen_roles = set()
     roles = assign_roles(num_players)
     for i in range(num_bot_players, num_players):        
@@ -337,6 +337,7 @@ def handle_user_response(text, game, question_type):
     #print("welcome", text.lower())
     text = text.strip()
     bot_is_allowed_to_talk = False
+    print(game)
     if question_type == "num_players": 
         allowed_answers = ["5","6","7","8","9","10"]
     elif question_type == "starting_player":
@@ -465,7 +466,7 @@ def bot_response(text):
 def start_new_game(game):
     game["game_is_going"] = True
     game["num_players"] = int(handle_user_response("Enter the number of players: ",{},"num_players"))
-    game["num_bot_players"] = int(handle_user_response("Enter the number of bot players: ",{},"starting_player"))
+    game["num_bot_players"] = int(handle_user_response("Enter the number of bot players: ",game,"starting_player"))
     game["current_president"] = int(handle_user_response("Enter the starting player: ",game,"starting_player"))
     game["player_roles"] = distribute_roles(game["num_bot_players"],game["num_players"]) 
     for bot in range(game["num_bot_players"]):
@@ -604,7 +605,8 @@ def start_bot_chat_boxes(num_bots):
     for thread in threads:
         thread.start()
 
-def main(game):
+def main():
+    global game
     clear_console_lines(2)
     print("\n")
     if handle_user_response("Would you like to start a (N)ew game or (L)oad the previous one? ", {}, "new_load") == "n":
