@@ -22,6 +22,18 @@ root.mainloop()
 -------------------------
 
 
+major testing needed for multiple bots
+
+i did:
+changed askbot refs(what about the other class that uses it? all good there?)
+changed append refs(complete)
+
+
+make bot talk function needs to be based on which bot is talking
+
+can we get different voices for different bots?
+
+
 ABILITY TO ADD AS MANY BOTS AS I WANT   
     anywhere i check to see for bot with player == 1, i should check for all bots
     anywhere i send summaries, i check which summary

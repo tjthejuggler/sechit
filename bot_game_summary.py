@@ -3,8 +3,9 @@ import json
 cwd = os.getcwd()
 
 class BotGameSummary:
-    def __init__(self, debugging, summary=None):
+    def __init__(self, debugging, index, summary=None):
         self.debugging = debugging
+        self.index = index
         if summary is None:
             self.summary = []
         else:
@@ -38,12 +39,12 @@ class BotGameSummary:
     #         json.dump(self, file)
 
     def save_to_file(self):
-        with open(cwd+'/backups/game_summary_backup.json', 'w') as file:
+        with open(cwd+'/backups/game_summary_backup'+self.index+'.json', 'w') as file:
             json.dump(self.summary, file)
 
     def load_from_file(self):
         try:
-            with open(cwd+'/backups/game_summary_backup.json', 'r') as file:
+            with open(cwd+'/backups/game_summary_backup'+self.index+'.json', 'r') as file:
                 data = json.load(file)
             self.summary = data
         except FileNotFoundError:
