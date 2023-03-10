@@ -22,6 +22,14 @@ root.mainloop()
 -------------------------
 
 
+ABILITY TO ADD AS MANY BOTS AS I WANT   
+    anywhere i check to see for bot with player == 1, i should check for all bots
+    anywhere i send summaries, i check which summary
+
+
+
+
+
 maybe a label on the conversation box that shows the last event to have happened
 
 
