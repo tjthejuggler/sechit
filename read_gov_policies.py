@@ -77,6 +77,16 @@ def show(num_cards, debugging):
                 # Show the black window
                 cv2.namedWindow('Black Window')
 
+                # w, h = cv2.getWindowImageRect('Black Window')[2:]
+
+                # # Get the size of the screen
+                # screen_w, screen_h = cv2.getWindowImageRect('Desktop')[2:]
+                # x = int((screen_w - w) / 2)
+                # y = int((screen_h - h) / 2)
+
+                # # Move the window to the center of the screen
+                # cv2.moveWindow('Black Window', x, y)
+
                 # Set the window focus
                 cv2.setWindowProperty('Black Window', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
