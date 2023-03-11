@@ -100,13 +100,14 @@ def append_all_bot_summaries_except_president(game, text):
         if bot != game["current_president"]:
             bot_game_sum[bot].append_to_last_user(text)
 
-def input_vote_results(bot_vote, game): #BOT VOTES SHOULD BE CHANGED TO A LIST AND DEALT WITH ACCORDINGLY
+def input_vote_results(bot_votes, game): #BOT VOTES SHOULD BE CHANGED TO A LIST AND DEALT WITH ACCORDINGLY
     vote_results = ""
     #debug_log('game3 '+ game)
     for voting_player in range(1, game["num_players"]+1):
         if voting_player in game["living_players"]:
             players_vote = ""
-            if voting_player == 1:
+            if voting_player < game["num_bot_players"]:
+                bot_vote = bot_votes[voting_player-1]
                 if bot_vote.lower().startswith(('y', 'j')) or 'yes' in bot_vote.lower():
                     players_vote = "Y"
                 else:
@@ -450,15 +451,17 @@ def get_eligible_chancellors(game):
     eligible_chancellors_str = ", ".join([f"p{number}" for number in eligible_chancellors])
     return eligible_chancellors_str
 
-def handle_voting(bot_num, game): #THIS NEEDS A FOR LOOP THAT GOES THROUGH ALL BOTS, IT SHOULD EXPORT A LIST OF VOTES
-    bot_vote = ""
+def handle_voting(game): 
+    bot_votes = [] 
     while True:
         human_ready = handle_user_response("Are you ready to see how the bot votes? (Y)es ", game, "continue")
         if human_ready == "y":
-            bot_vote = ask_bot(bot_num, "How do you vote? Answer with a single word, Yes or No.")
-            make_bot_response("I vote "+bot_vote+" for this government.")            
+            for bot in range(game["num_bot_players"]):
+                bot_vote = ask_bot(bot, "How do you vote? Answer with a single word, Yes or No.")
+                make_bot_response("I vote "+bot_vote+" for this government.")   
+                bot_votes.append(bot_vote)        
             break
-    return bot_vote
+    return bot_votes
 
 def handle_bot_nomination(game):
     bot_nomination_for_chancellor = ""
@@ -566,8 +569,8 @@ def main():
         if game["current_president"] < int(game["num_bot_players"]):
             #print("player1 pres")
             bot_nomination_for_chancellor = handle_bot_nomination(game)
-            bot_vote = handle_voting(game["current_president"], game) #THIS FUNCTION NEEDS FIXED AND THE BOT NUMBER PASSED IN DOESNT NEED PASSED IN, WE WILL LOOP THROUGH ALL THE BOTS IN IT
-            passed = input_vote_results(bot_vote, game)
+            bot_vote = handle_voting(game)
+            passed = input_vote_results(bot_votes, game)
             if passed:
                 game = election_passed(game, bot_nomination_for_chancellor)
                 game["game_is_going"] = check_for_hitler_win(game, bot_nomination_for_chancellor)
@@ -609,8 +612,8 @@ def main():
             else:
                 append_all_bot_summaries_except_president(game, "P"+str(game["current_president"])+" has nominated P"+humans_nomination_for_chancellor+" as Chancellor")
             #debug_log('game4 '+game)
-            bot_vote = handle_voting(humans_nomination_for_chancellor, game)  #THIS FUNCTION NEEDS FIXED AND THE BOT NUMBER PASSED IN DOESNT NEED PASSED IN, WE WILL LOOP THROUGH ALL THE BOTS IN IT
-            passed = input_vote_results(bot_vote, game)
+            bot_votes = handle_voting(game)
+            passed = input_vote_results(bot_votes, game)
             if passed:
                 game = election_passed(game, humans_nomination_for_chancellor)
                 #RIGHT NOW THE BOT GETS THE ELECTRION RESULTS, BUT IS NOT TOLD WHO THE CHANCELLOR IS - MAYBE WE WANT TO DO THIS TOO
