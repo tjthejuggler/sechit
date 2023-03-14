@@ -163,7 +163,8 @@ def handle_bot_investigation(game):
     while True:
         human_ready = handle_user_response("Are you ready to ask who the bot will nominate? (Y)es ", game, "continue")
         if human_ready == "y":
-            bot_investigation = ask_bot(int(game["current_president"])-1,"As president, you get to learn the party of another player. Which player would you like to investigate? Answer only with their number.")
+            choices = special_power_choices(game)
+            bot_investigation = ask_bot(int(game["current_president"])-1,"As president, you get to learn the party of another player. Which player would you like to investigate? Your choices are: "+choices+". Answer only with their number: ")
             bot_investigation = get_first_numeric_digit(bot_investigation)
             if bot_investigation == "No digit found":
                 bot_investigation = handle_user_response("Enter the number of the player that the bot will investigate.", game, "investigate")
@@ -184,7 +185,8 @@ def handle_bot_execution(game):
     while True:
         human_ready = handle_user_response("Are you ready to ask who the bot will execute? (Y)es ", game, "continue")
         if human_ready == "y":
-            bot_execution = ask_bot(int(game["current_president"])-1,"As president, you get to execute one player at the table. Which player would you like to execute? Answer only with their number.")
+            choices = special_power_choices(game)
+            bot_execution = ask_bot(int(game["current_president"])-1,"As president, you must execute one player at the table. Which player would you like to execute? Your choices are: "+choices+". Answer only with their number: ")
             bot_execution = get_first_numeric_digit(bot_execution)
             if bot_execution == "No digit found":
                 bot_execution = input("Enter the number of the player that the bot will execute.")
@@ -199,7 +201,8 @@ def handle_special_election(game):
     while True:
         human_ready = handle_user_response("Are you ready to ask who the bot will make president? (Y)es ", game, "continue")
         if human_ready == "y":
-            bot_special_election = ask_bot(int(game["current_president"])-1,"As president, you get to choose the next President-elect. Which player would you like to choose? Answer only with their number.")
+            choices = special_power_choices(game)
+            bot_special_election = ask_bot(int(game["current_president"])-1,"As president, you get to choose the next President-elect. Which player would you like to choose? Your choices are: "+choices+". Answer only with their number: ")
             bot_special_election = get_first_numeric_digit(bot_special_election)
             if bot_special_election == "No digit found":
                 bot_special_election = input("Enter the number of the player that the bot will nominate.")
@@ -208,6 +211,11 @@ def handle_special_election(game):
             append_all_bot_summaries(game,"As President, p"+game["current_president"]+" gave the special election to p"+bot_special_election)
             break
     return game
+
+def special_power_choices(game):
+    special_power_choices = [i for i in game["living_players"] if i != game["current_president"]]
+    special_power_choices_str = ", ".join([f"p{number}" for number in special_power_choices])
+    return special_power_choices_str
 
 def check_for_special_power(game):
     debug_log("CHECK SPECIAL POWERS")
@@ -224,7 +232,7 @@ def check_for_special_power(game):
             handle_special_election(game)
         else:
             human_player_special_election = handle_user_response("Which player did player "+str(game["current_president"])+" give the presidency to? Answer only with their number.", game,"special_power")
-            game["special_election_helper"] = -human_player_special_election
+            game["special_election_helper"] = -int(human_player_special_election)
             append_all_bot_summaries(game,"As President, p"+ str(game["current_president"])+" has used the special election power and made player "+human_player_special_election+" be President-elect.")
     #INVESTIGATION
     elif (game["num_players"] in [7,8] and game["fascist_policies"] == 2) or (game["num_players"] in [9,10] and game["fascist_policies"] in [1,2]):
@@ -453,7 +461,7 @@ def enact_top_policy(game):
 
 def get_eligible_chancellors(game):
     eligible_chancellors = [i for i in game["living_players"] if i != game["current_president"] and i != game["previous_chancellor"]]
-    eligible_chancellors.remove(game["previous_president"]) if len(game["living_players"]) > 5 else None
+    eligible_chancellors.remove(game["previous_president"]) if len(game["living_players"]) > 5 and game["previous_president"] in eligible_chancellors else None
     eligible_chancellors_str = ", ".join([f"p{number}" for number in eligible_chancellors])
     return eligible_chancellors_str
 
@@ -635,7 +643,7 @@ def main():
                 make_bot_response("Please show me 3 cards.", int(game["current_president"])-1)
                 cards_seen_pres = read_gov_policies.show(3, debugging)
                 bot_president_policy_discard = ask_bot(int(game["current_president"])-1,make_read_policies_question(cards_seen_pres, bot_nomination_for_chancellor))
-                make_bot_response("Discard policy number "+bot_president_policy_discard, game["current_president"])
+                make_bot_response("Discard policy number "+bot_president_policy_discard, int(game["current_president"])-1)
                 cards_seen_pres.pop(int(bot_president_policy_discard)-1)
                 policies_vetoed = False
                 if(game["fascist_policies"] == 5): #veto possibility
@@ -699,8 +707,8 @@ def main():
             #     game["special_election_helper"] = 11
             if game["special_election_helper"] < 0:
                 temp = game["current_president"]
-                game["current_president"] = game["special_election_helper"]
-                game["special_election_helper"] == -temp
+                game["current_president"] = -game["special_election_helper"]
+                game["special_election_helper"] = temp
             elif game["special_election_helper"] > 0:
                 game["current_president"] = game["special_election_helper"]
                 game["special_election_helper"] = 0
