@@ -1,60 +1,19 @@
+POSSIBLE BUGS
 bot won, player three was hitler, but game didnt end
 
-this might be useful in putting the conversation box lower
-import tkinter as tk
+maybe a label on the 1st conversation box that shows the last event to have happened
 
-root = tk.Tk()
-
-# set the width and height of the window
-width = 400
-height = 300
-
-# calculate the x and y positions of the window
-x_pos = (root.winfo_screenwidth() // 2) - (width // 2)
-y_pos = (root.winfo_screenheight() // 2) - (height // 2)
-
-# set the geometry of the window to the specified values
-root.geometry(f"{width}x{height}+{x_pos}+{y_pos}")
-
-root.mainloop()
-
-
--------------------------
-
-add duration back to bot_talks and make that graphic
-
+TESTING
 major testing needed for multiple bots
 
-i did:
-changed askbot refs(what about the other class that uses it? all good there?)
-changed append refs(complete)
+TALKING
+right now voice is random, but we dont want to repeat the voices
 
-
-make bot talk function needs to be based on which bot is talking
-
-can we get different voices for different bots?
-
-
-ABILITY TO ADD AS MANY BOTS AS I WANT   
-    anywhere i check to see for bot with player == 1, i should check for all bots
-    anywhere i send summaries, i check which summary
-
-
-
-
-
-maybe a label on the conversation box that shows the last event to have happened
-
-
-check out tkinter_graph.py, it can be included in the conversation window
-
-
+RANDOM TALKING
 make randomizer to limit random bot interjections on events
 
-
+CLEAN
 move some stuff from main into other files to clean up code
-
-
 
 HUMAN TALK
     there can be player question limits so that each person gets a certain number of interactions
@@ -77,6 +36,9 @@ figure out a way to make a testbench for this
 NEEDS TESTED:
     all powers
     game history creation at end of game
+
+SPEAKING VIDEO:
+    https://youtu.be/Ic0TBhfuOrA - the colab given here worked well, i imagine that with a decent computer it will be fast enough to do locally
 
 HISTORY SAVING:
     keep a running token size for the game summary

@@ -1,11 +1,17 @@
 import os
 import json
+import random
 cwd = os.getcwd()
+
+def get_random_voice():
+    voices = ["com.au", "us", "co.uk", "co.in"]
+    return voices[random.randint(0, len(voices)-1)]
 
 class BotGameSummary:
     def __init__(self, debugging, index, summary=None):
         self.debugging = debugging
         self.index = index
+        self.voice = get_random_voice()
         if summary is None:
             self.summary = []
         else:
@@ -21,10 +27,11 @@ class BotGameSummary:
         #save a backup of self to a file
         self.save_to_file()
         if self.debugging:
-            print("append", self.summary)
-        
+            print("append", self.summary)        
 
     def append_to_last_user(self, new_entry):
+        print('index', self.index)
+        print('summary', self.summary)
         if self.summary[-1]["role"] == "user":
             self.summary[-1]["content"] += "\n"+new_entry
         else:
@@ -32,7 +39,6 @@ class BotGameSummary:
         self.save_to_file()
         if self.debugging:
             print("append_to_last_user", self.summary)
-
 
     # def save_to_file(self):
     #     with open(cwd+'/backups/game_summary_backup.json', 'w') as file:
