@@ -14,8 +14,7 @@ def send_request(request_message):
     response = ""
 
     #print("last_item", last_item)
-
-    if "nominate" in last_item:
+    if any(word in last_item for word in ["nominate", "execute", "investigate", "President-elects"]):
         choices = [int(char) for char in last_item if char.isdigit()]
         response = str(random.choice(choices))
     elif "Yes or No" in last_item:

@@ -161,23 +161,22 @@ def get_first_numeric_digit(string):
 def handle_bot_investigation(game):
     bot_investigation = ""
     while True:
-        human_ready = handle_user_response("Are you ready to ask who the bot will nominate? (Y)es ", game, "continue")
+        human_ready = handle_user_response("Are you ready to ask who the bot will investigate? (Y)es ", game, "continue")
         if human_ready == "y":
             choices = special_power_choices(game)
             bot_investigation = ask_bot(int(game["current_president"])-1,"As president, you get to learn the party of another player. Which player would you like to investigate? Your choices are: "+choices+". Answer only with their number: ")
             bot_investigation = get_first_numeric_digit(bot_investigation)
             if bot_investigation == "No digit found":
-                bot_investigation = handle_user_response("Enter the number of the player that the bot will investigate.", game, "investigate")
-            make_bot_response("I will investigate player "+bot_investigation, game["current_president"])
-            if int(bot_investigation) <= int(game["num_bot_players"]):
-                investigated_players_input = game["player_roles"][bot_investigation-1]
-            else:
-                investigated_players_input = input("Player"+bot_investigation+", press (F)ascist or (L)iberal, then press enter.")
-            if investigated_players_input.lower().beginswith("f"):
-                bot_game_sum[int(game["current_president"])-1].append_to_last_user("p"+ bot_investigation+" is a Fascist")
-            else:
-                bot_game_sum[int(game["current_president"])-1].append_to_last_user("p"+ bot_investigation+" is a Liberal")
-            append_all_bot_summaries(game,"As President, p"+game["current_president"]+" investigated p"+bot_investigation)
+                bot_investigation = handle_user_response("Enter the number of the player that the bot will investigate.", game, "special_power")
+            make_bot_response("I have investigated player "+bot_investigation, int(game["current_president"])-1)
+            ready_to_continue = handle_user_response("Are you ready to continue? (Y)es: ", game, "continue")
+            if ready_to_continue:
+                investigation_result = game["player_roles"][int(bot_investigation)-1]
+                if investigation_result.lower() in ["hitler", "fascist"]:
+                    bot_game_sum[int(game["current_president"])-1].append_to_last_user("p"+ bot_investigation+" is a Fascist")
+                else:
+                    bot_game_sum[int(game["current_president"])-1].append_to_last_user("p"+ bot_investigation+" is a Liberal")
+                append_all_bot_summaries(game,"As President, p"+str(game["current_president"])+" investigated p"+bot_investigation)
             break
 
 def handle_bot_execution(game):
@@ -189,10 +188,10 @@ def handle_bot_execution(game):
             bot_execution = ask_bot(int(game["current_president"])-1,"As president, you must execute one player at the table. Which player would you like to execute? Your choices are: "+choices+". Answer only with their number: ")
             bot_execution = get_first_numeric_digit(bot_execution)
             if bot_execution == "No digit found":
-                bot_execution = input("Enter the number of the player that the bot will execute.")
-            make_bot_response("I formally execute Player "+bot_execution, game["current_president"])
+                bot_execution = input("Enter the number of the player that the bot will execute.", game, "special_power")
+            make_bot_response("I formally execute Player "+bot_execution, int(game["current_president"])-1)
             game["living_players"].remove(int(bot_execution))
-            append_all_bot_summaries(game,"As President, p"+game["current_president"]+" executed p"+bot_execution)
+            append_all_bot_summaries(game,"As President, p"+str(game["current_president"])+" executed p"+bot_execution)
             break
     return game
 
@@ -205,10 +204,10 @@ def handle_special_election(game):
             bot_special_election = ask_bot(int(game["current_president"])-1,"As president, you get to choose the next President-elect. Which player would you like to choose? Your choices are: "+choices+". Answer only with their number: ")
             bot_special_election = get_first_numeric_digit(bot_special_election)
             if bot_special_election == "No digit found":
-                bot_special_election = input("Enter the number of the player that the bot will nominate.")
-            make_bot_response("I will make player "+bot_special_election+"be President.", game["current_president"])
+                bot_special_election = input("Enter the number of the player that the bot will choose as President-elect.", game, "special_power")
+            make_bot_response("I will make player "+bot_special_election+"be President.", int(game["current_president"])-1)
             game["special_election_helper"] = -bot_special_election
-            append_all_bot_summaries(game,"As President, p"+game["current_president"]+" gave the special election to p"+bot_special_election)
+            append_all_bot_summaries(game,"As President, p"+str(game["current_president"])+" gave the special election to p"+bot_special_election)
             break
     return game
 
