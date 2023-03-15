@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import subprocess
 
 
 
@@ -23,7 +24,7 @@ def show(num_cards, debugging):
     num_blue = 0
 
     read_cards = []
-
+    active_window_id = subprocess.check_output(["xprop", "-root", "_NET_ACTIVE_WINDOW"]).decode("utf-8").strip().split()[-1]
     while len(read_cards) < num_cards:
         # Start capturing frames
         while True:
@@ -50,10 +51,6 @@ def show(num_cards, debugging):
             percentage_red = (num_red / total_pixels) * 100
             percentage_blue = (num_blue / total_pixels) * 100
 
-            # Print the percentage of red and blue pixels
-            #print("Percentage of red pixels:", percentage_red)
-            #print("Percentage of blue pixels:", percentage_blue)
-
             # Check if the spacebar is pressed and determine which color is more dominant
             if cv2.waitKey(1) == ord(' '):
                 if percentage_red > percentage_blue:
@@ -77,16 +74,6 @@ def show(num_cards, debugging):
                 # Show the black window
                 cv2.namedWindow('Black Window')
 
-                # w, h = cv2.getWindowImageRect('Black Window')[2:]
-
-                # # Get the size of the screen
-                # screen_w, screen_h = cv2.getWindowImageRect('Desktop')[2:]
-                # x = int((screen_w - w) / 2)
-                # y = int((screen_h - h) / 2)
-
-                # # Move the window to the center of the screen
-                # cv2.moveWindow('Black Window', x, y)
-
                 # Set the window focus
                 cv2.setWindowProperty('Black Window', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
@@ -95,17 +82,12 @@ def show(num_cards, debugging):
 
                 cv2.imshow('Black Window', black_image)
 
-                
-
-
     # Release the video capture object and close all windows
     cap.release()
     cv2.destroyAllWindows()
-
+    subprocess.call(["wmctrl", "-i", "-a", active_window_id])
     if debugging:
         print(read_cards)
-
-
 
     return(read_cards)
 
