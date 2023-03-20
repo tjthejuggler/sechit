@@ -1,13 +1,14 @@
+MULTIPLE BOTS FEATURES
+    TALKING
+    right now voice is random, but we dont want to repeat the voices
+
+    TESTING
+    major testing needed for multiple bots
+
 POSSIBLE BUGS
 bot won, player three was hitler, but game didnt end
 
 maybe a label on the 1st conversation box that shows the last event to have happened
-
-TESTING
-major testing needed for multiple bots
-
-TALKING
-right now voice is random, but we dont want to repeat the voices
 
 RANDOM TALKING
 make randomizer to limit random bot interjections on events

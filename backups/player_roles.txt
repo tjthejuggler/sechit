@@ -1,1 +1,1 @@
-["Hitler", "Liberal", "Liberal", "Liberal", "Fascist"]
+["Hitler", "Liberal", "Fascist", "Liberal", "Liberal", "Liberal", "Fascist"]
