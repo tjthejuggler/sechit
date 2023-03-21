@@ -1,3 +1,7 @@
+    #when the bot invesigates it should probably tell people if they are fascist or liberal
+    #a place to put in a short description about the player would be nice to give them some character and variety
+    #when text mentions the bot it should say which bot it is
+
 MULTIPLE BOTS FEATURES
     TALKING
     right now voice is random, but we dont want to repeat the voices
