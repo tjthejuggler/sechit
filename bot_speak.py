@@ -6,7 +6,8 @@ import pygame
 #get current directory
 import os
 
-def say(text, voice):
+def say(text, voice):#, player_names):
+    print(text)
     cwd = os.getcwd()
     filename = text[:245].title().replace(" ","").replace(",","").replace(".","").replace("?","").replace("!","").replace(":","").replace(";","").replace("'","").replace('"',"").replace("(","").replace(")","").replace("[","").replace("]","").replace("{","").replace("}","").replace("/","").replace("\\","").replace("|","").replace("@","").replace("#","").replace("$","").replace("%","").replace("^","").replace("&","").replace("*","").replace("-","").replace("_","").replace("=","").replace("+","").replace("`","").replace("~","").replace("<","").replace(">","")
     dir = cwd+"/bot_audio/"+voice.replace(".","")+"/"

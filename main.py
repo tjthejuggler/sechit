@@ -18,6 +18,7 @@ from bot_conversation_box import BotTalkBox
 import tkinter as tk
 import glob
 import subprocess
+import re
 
 debugging = False
 
@@ -48,18 +49,20 @@ def assign_roles(num_players):
     return roles
 
 def clear_console_lines(count):
-    for i in range(count):
-        sys.stdout.write('\033[F\r')# use '\033[F' to move the cursor up one line, use '\r' to return the cursor to the beginning of the line
-        sys.stdout.write(' ' * 150)
-    sys.stdout.write('\r')
-    sys.stdout.flush()
+    # for i in range(count):
+    #     sys.stdout.write('\033[F\r')# use '\033[F' to move the cursor up one line, use '\r' to return the cursor to the beginning of the line
+    #     sys.stdout.write(' ' * 150)
+    # sys.stdout.write('\r')
+    # sys.stdout.flush()
+    if not debugging:
+        os.system("clear")
 
 def show_secret(text_to_show):
         print(" ")
         print(text_to_show)
         print(" ")
         input("Press any key to hide this information!!".upper())
-        clear_console_lines(5)    
+        clear_console_lines(1)    
 
 def distribute_roles(num_bot_players, num_players):
     seen_roles = set()
@@ -87,7 +90,7 @@ def ask_bot(bot_num, request_message):
     bot_num = int(bot_num)
     #call the function from chatgpt_req.py
     bot_game_sum[bot_num].append(["user",request_message])
-    response = fake_chatgpt_req.send_request(bot_game_sum[bot_num].read())
+    response = chatgpt_req.send_request(bot_game_sum[bot_num].read())
     bot_game_sum[bot_num].append(["assistant",response])
     debug_log("-----")
     for item in bot_game_sum[bot_num].read(): #this is for testing only, it should actually only be seen by the assistant
@@ -99,9 +102,9 @@ def ask_bot(bot_num, request_message):
 
 def append_all_bot_summaries(game, text):
     for bot in range(game["num_bot_players"]):
-        print("appending to bot "+str(bot), text)
-        print("appending to bot "+str(bot), text)
-        print("appending to bot "+str(bot), text)
+        # print("appending to bot "+str(bot), text)
+        # print("appending to bot "+str(bot), text)
+        # print("appending to bot "+str(bot), text)
         bot_game_sum[bot].append_to_last_user(text)
 
 def append_all_bot_summaries_except_president(game, text):
@@ -172,13 +175,13 @@ def get_first_numeric_digit(string):
 def handle_bot_investigation(game):
     bot_investigation = ""
     while True:
-        human_ready = handle_user_response("Are you ready to ask who bot"+game["current_president"]+" will investigate? (Y)es ", game, "continue")
+        human_ready = handle_user_response("Are you ready to ask who bot"+str(game["current_president"])+" will investigate? (Y)es ", game, "continue")
         if human_ready == "y":
             choices = special_power_choices(game)
             bot_investigation = ask_bot(int(game["current_president"])-1,"As president, you get to learn the party of another player. Which player would you like to investigate? Your choices are: "+choices+". Answer only with their number: ")
             bot_investigation = get_first_numeric_digit(bot_investigation)
             if bot_investigation == "No digit found":
-                bot_investigation = handle_user_response("Enter the number of the player that bot"+game["current_president"]+" will investigate.", game, "special_power")
+                bot_investigation = handle_user_response("Enter the number of the player that bot"+str(game["current_president"])+" will investigate.", game, "special_power")
             make_bot_response("I have investigated player "+bot_investigation, int(game["current_president"])-1)
             ready_to_continue = handle_user_response("Are you ready to continue? (Y)es: ", game, "continue")
             if ready_to_continue:
@@ -193,13 +196,13 @@ def handle_bot_investigation(game):
 def handle_bot_execution(game):
     bot_execution = ""
     while True:
-        human_ready = handle_user_response("Are you ready to ask who bot"+game["current_president"]+" will execute? (Y)es ", game, "continue")
+        human_ready = handle_user_response("Are you ready to ask who bot"+str(game["current_president"])+" will execute? (Y)es ", game, "continue")
         if human_ready == "y":
             choices = special_power_choices(game)
             bot_execution = ask_bot(int(game["current_president"])-1,"As president, you must execute one player at the table. Which player would you like to execute? Your choices are: "+choices+". Answer only with their number: ")
             bot_execution = get_first_numeric_digit(bot_execution)
             if bot_execution == "No digit found":
-                bot_execution = input("Enter the number of the player that bot"+game["current_president"]+" will execute.", game, "special_power")
+                bot_execution = input("Enter the number of the player that bot"+str(game["current_president"])+" will execute.", game, "special_power")
             make_bot_response("I formally execute Player "+bot_execution, int(game["current_president"])-1)
             game["living_players"].remove(int(bot_execution))
             append_all_bot_summaries(game,"As President, p"+str(game["current_president"])+" executed p"+bot_execution)
@@ -209,13 +212,13 @@ def handle_bot_execution(game):
 def handle_bot_special_election(game):
     bot_special_election = ""
     while True:
-        human_ready = handle_user_response("Are you ready to ask who bot"+game["current_president"]+" will make president? (Y)es ", game, "continue")
+        human_ready = handle_user_response("Are you ready to ask who bot"+str(game["current_president"])+" will make president? (Y)es ", game, "continue")
         if human_ready == "y":
             choices = special_power_choices(game)
             bot_special_election = ask_bot(int(game["current_president"])-1,"As president, you get to choose the next President-elect. Which player would you like to choose? Your choices are: "+choices+". Answer only with their number: ")
             bot_special_election = get_first_numeric_digit(bot_special_election)
             if bot_special_election == "No digit found":
-                bot_special_election = input("Enter the number of the player that bot"+game["current_president"]+" will choose as President-elect.", game, "special_power")
+                bot_special_election = input("Enter the number of the player that bot"+str(game["current_president"])+" will choose as President-elect.", game, "special_power")
             make_bot_response("I will make player "+bot_special_election+"be President.", int(game["current_president"])-1)
             game["special_election_helper"] = -bot_special_election
             append_all_bot_summaries(game,"As President, p"+str(game["current_president"])+" gave the special election to p"+bot_special_election)
@@ -243,9 +246,9 @@ def check_for_special_power(game):
         else:
             human_player_special_election = handle_user_response("Which player did player "+str(game["current_president"])+" give the presidency to? Answer only with their number.", game,"special_power")
             game["special_election_helper"] = -int(human_player_special_election)
-            print("SPECIAL ELECTION!")
-            print("SPECIAL ELECTION!")
-            print("SPECIAL ELECTION!")
+            # print("SPECIAL ELECTION!")
+            # print("SPECIAL ELECTION!")
+            # print("SPECIAL ELECTION!")
             append_all_bot_summaries(game,"As President, p"+ str(game["current_president"])+" has used the special election power and made player "+human_player_special_election+" be President-elect.")
     #INVESTIGATION
     elif (game["num_players"] in [7,8] and game["fascist_policies"] == 2) or (game["num_players"] in [9,10] and game["fascist_policies"] in [1,2]):
@@ -510,7 +513,7 @@ def handle_user_response(text, game, question_type):
 
 
 def make_bot_response(text, speaking_bot):
-    print('Bot: '+text, 'Speaking_bot: ', speaking_bot)
+    #print('Bot: '+text, 'Speaking_bot: ', speaking_bot)
     bot_conversation_box.bot_talks(text)
     bot_response_thread = threading.Thread(target=bot_response, args=(text,speaking_bot,))
     bot_response_thread.start()
@@ -589,10 +592,11 @@ def handle_voting(game):
 def handle_bot_nomination(game):
     bot_nomination_for_chancellor = ""
     while True:
-        human_ready = handle_user_response("Are you ready to ask who bot"+game["current_president"]+" will nominate? (Y)es:  ", game, "continue")
+        human_ready = handle_user_response("Are you ready to ask who bot"+str(game["current_president"])+" will nominate? (Y)es:  ", game, "continue")
         if human_ready == "y":
             eligible_chancellors = get_eligible_chancellors(game)
-            bot_nomination_for_chancellor = ask_bot(int(game["current_president"])-1,"You must nominate a chancelor. Your choices are "+eligible_chancellors+". Which player do you choose? Answer with their player number only.")               
+            bot_nomination_for_chancellor = ask_bot(int(game["current_president"])-1,"You must nominate a chancelor. Your choices are "+eligible_chancellors+". Which player do you choose? Answer with their player number only.")
+            bot_nomination_for_chancellor = get_first_numeric_digit(bot_nomination_for_chancellor)        
             break
     append_all_bot_summaries_except_president(game,"As President, p"+ str(game["current_president"])+" has nominated p"+bot_nomination_for_chancellor+" as chancellor.")
     make_bot_response("I nominate player "+bot_nomination_for_chancellor+" as chancellor.", int(game["current_president"])-1)
@@ -643,8 +647,9 @@ def check_for_hitler_win(game, current_chancellor):
 
 def bot_chancellor_policy_selection(chancellor, cards_seen, game):
     bot_chancellor_policy_choice = ask_bot(int(chancellor)-1, make_read_policies_question(cards_seen, game["current_president"]))
-    bots_card =  cards_seen[int(bot_chancellor_policy_choice)-1]
-    print("about to make it")
+    bot_chancellor_policy_choice = get_first_numeric_digit(bot_chancellor_policy_choice)
+    bots_card = cards_seen[int(bot_chancellor_policy_choice)-1]
+    #print("about to make it")
     make_bot_response("Play policy number "+bot_chancellor_policy_choice+". It is a " + bots_card + " policy.", int(chancellor)-1)
     bot_game_sum[int(chancellor)-1].append_to_last_user("You played a "+bots_card+" policy.")
     if bots_card == "fascist":
@@ -716,7 +721,7 @@ def handle_veto_possibility(game, chancellor, cards_seen_pres):
                 bot_game_sum[int(game["current_president"]) - 1].append_to_last_user("Your Chancellor, P" + str(chancellor) + " did not want a veto.")
     if not policies_vetoed:
         if int(chancellor) <= int(game["num_bot_players"]):
-            print('cards_seen_pres', cards_seen_pres)
+            #print('cards_seen_pres', cards_seen_pres)
             if cards_seen_pres == []:
                 cards_seen_pres = read_gov_policies.show(2, debugging)
             game = bot_chancellor_policy_selection(chancellor, cards_seen_pres, game)
@@ -733,6 +738,7 @@ def handle_bot_turn(game, bot_nomination_for_chancellor):
         make_bot_response("Please show me 3 cards.", int(game["current_president"])-1)
         cards_seen_pres = read_gov_policies.show(3, debugging)
         bot_president_policy_discard = ask_bot(int(game["current_president"])-1,make_read_policies_question(cards_seen_pres, bot_nomination_for_chancellor))
+        bot_president_policy_discard = get_first_numeric_digit(bot_president_policy_discard)    
         make_bot_response("Discard policy number "+bot_president_policy_discard, int(game["current_president"])-1)
         cards_seen_pres.pop(int(bot_president_policy_discard)-1)
         game = handle_veto_possibility(game, bot_nomination_for_chancellor, cards_seen_pres)
@@ -754,7 +760,7 @@ def handle_human_turn(game, humans_nomination_for_chancellor):
 def main():
     global game
     clear_console_lines(2)
-    print("\n")
+    #print("\n")
     if handle_user_response("Would you like to start a (N)ew game or (L)oad the previous one? ", {}, "new_load") == "n":
         game = start_new_game(game)
     else:

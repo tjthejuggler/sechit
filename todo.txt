@@ -1,3 +1,12 @@
+do checks with gpt3 and clean up the responses it says
+
+bot should always tell results of investigation_result
+
+we should be able to input player names at startup so that the bot always refers to people by name
+
+
+add token counter (it is already in tail/storytell)
+    
     #when the bot invesigates it should probably tell people if they are fascist or liberal
     #a place to put in a short description about the player would be nice to give them some character and variety
     #when text mentions the bot it should say which bot it is
