@@ -5,6 +5,7 @@ def send_request(request_message):
         api_key = f.read().strip()
     openai.api_key = (api_key)
     response = openai.ChatCompletion.create(
+    #model="gpt-4",
     model="gpt-3.5-turbo",
     messages=request_message
     )

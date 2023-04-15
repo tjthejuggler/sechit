@@ -1,1 +1,1 @@
-{"game_is_going": true, "num_players": 5, "num_bot_players": 1, "current_president": 1, "known_fascists": [], "fascist_policies": 5, "liberal_policies": 1, "living_players": [1, 2, 4, 5], "previous_president": 1, "previous_chancellor": 2, "failed_elections": 0, "special_election_helper": 0}
+{"game_is_going": true, "num_players": 9, "num_bot_players": 1, "current_president": 2, "fascist_policies": 1, "liberal_policies": 0, "living_players": [1, 2, 3, 4, 5, 6, 7, 8, 9], "previous_president": 1, "previous_chancellor": 2, "failed_elections": 0, "special_election_helper": 0}

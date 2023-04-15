@@ -114,26 +114,35 @@ def append_all_bot_summaries_except_president(game, text):
 
 def input_vote_results(bot_votes, game): #BOT VOTES SHOULD BE CHANGED TO A LIST AND DEALT WITH ACCORDINGLY
     vote_results = ""
+    yes_votes = 0
+    no_votes = 0
     #debug_log('game3 '+ game)
-    for voting_player in range(game["num_bot_players"]+1, game["num_players"]+1):
+    for voting_player in range(1, game["num_players"]+1):
         if voting_player in game["living_players"]:
             players_vote = ""
-            if voting_player < game["num_bot_players"]:
+            if voting_player <= game["num_bot_players"]:
                 bot_vote = bot_votes[voting_player-1]
+                print("bot_vote", bot_vote)
                 if bot_vote.lower().startswith(('y', 'j')) or 'yes' in bot_vote.lower():
                     players_vote = "Y"
+                    yes_votes += 1
                 else:
                     players_vote = "N"
+                    no_votes += 1
             else:
                 players_vote = handle_user_response(f"Player {voting_player}: (J)a / (N)ein? ", game, "yes_or_no_vote")
                 if players_vote.lower() in ('j', 'y'):
                     players_vote = "Y"
+                    yes_votes += 1
                 else:
                     players_vote = "N"
+                    no_votes += 1
+            print("yes "+str(yes_votes)+" no "+str(no_votes)+"num_players"+str(game["num_players"]))
             vote_results += "p"+str(voting_player) +"-"+ players_vote + " "
     append_all_bot_summaries(game, "vote_results: "+vote_results)
     #debug_log(json.dumps(bot_game_sum.read()))
-    passed = vote_results.count("Y") > vote_results.count("N")
+    passed = yes_votes > no_votes
+    #passed = vote_results.count("Y") > vote_results.count("N")
     return passed
 
 # def input_human_nomination(current_president, game):
@@ -166,10 +175,26 @@ def check_for_policy_game_completion(game):
                 make_bot_response("We won, Libers!", int(game["current_president"])-1)
     return game_is_going
 
+def dummy_bot_digit_finder(text):
+    found_digit = chatgpt_req.send_request([{"role": "user", "content":"Figure out which number is being indicated in this text.\n\n"+text+"\n\nRespond only with a single numeric digit."}])
+    #print("tokens", tokens)
+    return(found_digit)
+
 def get_first_numeric_digit(string):
+    string = string.lower()
     for char in string:
         if char.isdigit():
             return char
+    if 'one' in string or 'first' in string:
+        return "1"
+    if 'two' in string or 'second' in string:
+        return "2"
+    if 'three' in string or 'third' in string:
+        return "3"
+    dummy_digit = dummy_bot_digit_finder(string)
+    for dummy_char in dummy_digit:
+        if dummy_char.isdigit():
+            return dummy_char    
     return "No digit found"
 
 def handle_bot_investigation(game):
@@ -182,15 +207,21 @@ def handle_bot_investigation(game):
             bot_investigation = get_first_numeric_digit(bot_investigation)
             if bot_investigation == "No digit found":
                 bot_investigation = handle_user_response("Enter the number of the player that bot"+str(game["current_president"])+" will investigate.", game, "special_power")
-            make_bot_response("I have investigated player "+bot_investigation, int(game["current_president"])-1)
-            ready_to_continue = handle_user_response("Are you ready to continue? (Y)es: ", game, "continue")
-            if ready_to_continue:
-                investigation_result = game["player_roles"][int(bot_investigation)-1]
-                if investigation_result.lower() in ["hitler", "fascist"]:
-                    bot_game_sum[int(game["current_president"])-1].append_to_last_user("p"+ bot_investigation+" is a Fascist")
-                else:
-                    bot_game_sum[int(game["current_president"])-1].append_to_last_user("p"+ bot_investigation+" is a Liberal")
-                append_all_bot_summaries(game,"As President, p"+str(game["current_president"])+" investigated p"+bot_investigation)
+
+            #ready_to_continue = handle_user_response("Are you ready to continue? (Y)es: ", game, "continue")
+            #if ready_to_continue:
+            investigation_result = game["player_roles"][int(bot_investigation)-1]
+            if investigation_result.lower() in ["hitler", "fascist"]:
+                bot_game_sum[int(game["current_president"])-1].append_to_last_user("p"+ bot_investigation+" is a Fascist")
+            else:
+                bot_game_sum[int(game["current_president"])-1].append_to_last_user("p"+ bot_investigation+" is a Liberal")
+            append_all_bot_summaries(game,"As President, p"+str(game["current_president"])+" investigated p"+bot_investigation)
+            bot_investigation_result = ask_bot(int(game["current_president"])-1,"The other players are curious to know what you claim the investigation result was, according to the rules you are allowed to lie to them if you choose to. Would you like to claim that p"+bot_investigation+" is Liberal or Fascist? Answer with a single word only: ")
+            bot_investigation_result_parsed = 'liberal'
+            if 'fascist' in bot_investigation_result.lower():
+                bot_investigation_result_parsed = 'fascist'
+            make_bot_response("I have investigated player "+bot_investigation +". They are a "+bot_investigation_result_parsed, int(game["current_president"])-1)
+
             break
 
 def handle_bot_execution(game):
@@ -380,7 +411,7 @@ def tell_bot_fellow_fascists(bot, player_roles, num_players):
     elif player_roles[bot] == "Hitler" and num_players in [5, 6]:
         known_fascists.append(fascist_index[0])
         bot_game_sum[bot].append_to_last_user(f"The regular fascist is p{fascist_index[0]}")
-    return known_fascists
+    #return known_fascists
 
 # def handle_user_response(text, game, question_type):
 #     #print("welcome", text.lower())
@@ -510,8 +541,6 @@ def handle_user_response(text, game, question_type):
 
     return player_input
 
-
-
 def make_bot_response(text, speaking_bot):
     #print('Bot: '+text, 'Speaking_bot: ', speaking_bot)
     bot_conversation_box.bot_talks(text)
@@ -542,7 +571,8 @@ def start_new_game(game):
             bot_game_sum[bot].append(["system",'You are an cunning game theorist about to play the game Secret Hitler. You have been randomly assigned the role of "Fascist" this game. Your goal is to get 6 fascist policy tiles passed or to get Hitler elected as Chancellor after 3 policies have been played. You should never let anyone know that you are a Fascist, if anyone asks, lie and say that you are a liberal. You should also try to convince the other players to vote for you.'])
         elif game["player_roles"][bot] == "Hitler":
             bot_game_sum[bot].append(["system",'You are an cunning game theorist about to play the game Secret Hitler. You have been randomly assigned the role of "Hitler" this game. Your goal is to get 6 fascist policy tiles passed or to get elected as Chancellor after 3 policies have been played. You should never let anyone know that you are a Hitler. If anyone asks, lie and say that you are a liberal. You should also try to convince the other players to vote for you.'])
-        game["known_fascists"] = tell_bot_fellow_fascists(bot, game["player_roles"], game["num_players"])   
+        #game["known_fascists"] = tell_bot_fellow_fascists(bot, game["player_roles"], game["num_players"])   
+        tell_bot_fellow_fascists(bot, game["player_roles"], game["num_players"])  
     game["fascist_policies"] = 0
     game["liberal_policies"] = 0
     game["living_players"] = [i for i in range(1, game["num_players"]+1)]
